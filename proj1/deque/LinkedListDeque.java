@@ -105,7 +105,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public void printDeque() {
-
+        // Todo
     }
 
     /**
@@ -113,6 +113,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeFirst() {
+        // Todo
         return null;
     }
 
@@ -121,6 +122,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public T removeLast() {
+        // Todo
         return null;
     }
 
@@ -143,6 +145,7 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public Iterator<T> iterator() {
+        // Todo
         return null;
     }
 
@@ -151,13 +154,14 @@ public class LinkedListDeque<T> implements Deque<T> {
      */
     @Override
     public boolean equals(Objects o) {
+        // Todo
         return false;
     }
 
     public static void main(String[] args) {
-        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
-        lld1.addLast("I");
-        lld1.addLast("love");
-        lld1.addLast("Toby");
+//        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+//        lld1.addLast("I");
+//        lld1.addLast("love");
+//        lld1.addLast("Toby");
     }
 }
