@@ -1,12 +1,9 @@
 package deque;
 
 import org.junit.Test;
-
 import static deque.TimeTest.printTimingTable;
 import static deque.TimeTest.timeCompute;
 import static org.junit.Assert.*;
-import edu.princeton.cs.algs4.Stopwatch;
-
 
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
@@ -71,8 +68,6 @@ public class LinkedListDequeTest {
     /** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
     public void addRemoveTest() {
 
-        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-        /*
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
 		// should be empty
 		assertTrue("lld1 should be empty upon initialization", lld1.isEmpty());
@@ -84,7 +79,38 @@ public class LinkedListDequeTest {
 		lld1.removeFirst();
 		// should be empty
 		assertTrue("lld1 should be empty after removal", lld1.isEmpty());
-        */
+    }
+
+    @Test
+    /**
+     * RemoveFirst test.
+     */
+    public void removeFirstTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        lld1.addFirst(5);
+        lld1.addFirst(4);
+        lld1.addFirst(6);
+        lld1.addFirst(7);
+        assertEquals((Object) 7, lld1.removeFirst());
+        lld1.addFirst(3);
+        assertEquals((Object) 3, lld1.removeFirst());
+        assertEquals((Object) 6, lld1.removeFirst());
+        assertEquals((Object) 4, lld1.removeFirst());
+        assertEquals((Object) 5, lld1.removeFirst());
+    }
+
+    @Test
+    /**
+     * RemoveLast test.
+     */
+    public void removeLastTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        for (int i = 0; i < 10000; i++) {
+            lld1.addLast(i);
+        }
+        for (int i = 9999; i >= 0; i--) {
+            assertEquals((Object) i, lld1.removeLast());
+        }
     }
 
     @Test
