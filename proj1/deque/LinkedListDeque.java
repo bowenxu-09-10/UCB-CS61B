@@ -59,12 +59,24 @@ public class LinkedListDeque<T> implements Deque<T> {
         tmp.prev = sentinel.next;
         sentinel.next.prev = sentinel;
         size += 1;
+        tmp = null;
     };
 
     /**
      * Adds an item of type T to the back of the deque.
      */
     public void addLast(T item) {
+        if (this.size == 0) {
+            initializeSentinel(item);
+            return;
+        }
+        StuffNode lstNode = sentinel.prev;
+        lstNode.next = new StuffNode(item, sentinel);
+        lstNode.next.prev = lstNode;
+        lstNode.next.next = sentinel;
+        sentinel.prev = lstNode.next;
+        size += 1;
+        lstNode = null;
     }
 
     /**
@@ -129,8 +141,8 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public static void main(String[] args) {
         LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
-        lld1.addFirst("I");
-        lld1.addFirst("love");
-        lld1.addFirst("Toby");
+        lld1.addLast("I");
+        lld1.addLast("love");
+        lld1.addLast("Toby");
     }
 }
