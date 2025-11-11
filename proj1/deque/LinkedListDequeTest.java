@@ -8,6 +8,23 @@ import static org.junit.Assert.*;
 public class LinkedListDequeTest {
 
     @Test
+    /**
+     * Add a few this to the list, checking get() is correct.
+     */
+    public void getTest() {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+        lld1.addFirst("I");
+        lld1.addFirst("love");
+        String actual = lld1.get(1);
+        String expected = "love";
+        assertEquals(expected, actual);
+        lld1.addFirst("Toby");
+        String actual2 = lld1.get(2);
+        String expected2 = "Toby";
+        assertEquals(expected, actual);
+    }
+
+    @Test
     /** Adds a few things to the list, checking isEmpty() and size() are correct,
      * finally printing the results.
      *
