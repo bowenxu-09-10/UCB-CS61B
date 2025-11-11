@@ -122,7 +122,12 @@ public class LinkedListDeque<T> implements Deque<T> {
      * 1 is the next item, and so forth.
      */
     public T get(int index) {
-        return null;
+        StuffNode temp = this.sentinel;
+        for (int i = size; i > 0; i--) {
+            temp = temp.next;
+            i--;
+        }
+        return temp.item;
     }
 
     /**
