@@ -138,7 +138,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             System.out.println("There is no content in LLDeque.");
             return null;
         }
-        T content = this.get(size - 1);
+        T content = sentinel.prev.item;
         StuffNode temp = sentinel.prev;
         sentinel.prev.next = null;
         sentinel.prev.prev.next = sentinel;
