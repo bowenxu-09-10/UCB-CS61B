@@ -24,9 +24,12 @@ public class TimeTest {
     public static void timeCompute(int n, LinkedListDeque<Integer> Ns,
                                    LinkedListDeque<Double> times, LinkedListDeque<Integer> opCounts) {
         LinkedListDeque<Integer> lst = new LinkedListDeque<>();
-        Stopwatch sw = new Stopwatch();
         for (int i = 0; i < n; i++) {
             lst.addLast(i);
+        }
+        Stopwatch sw = new Stopwatch();
+        for (int i = 0; i < n; i++) {
+            lst.removeLast();
         }
         double timeInSenconds = sw.elapsedTime();
         times.addLast(timeInSenconds);
