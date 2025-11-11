@@ -106,6 +106,10 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public void printDeque() {
         // Todo
+        for (int i = 0; i < size - 1; i++) {
+            System.out.print(get(i) + " ");
+        }
+        System.out.println(get(size - 1));
     }
 
     /**
@@ -133,9 +137,8 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public T get(int index) {
         StuffNode temp = this.sentinel;
-        for (int i = size; i > 0; i--) {
+        for (int i = 0; i <= index; i++) {
             temp = temp.next;
-            i--;
         }
         return temp.item;
     }
