@@ -32,8 +32,10 @@ public class ArrayDeque<T> implements Deque<T>{
      * Return true if deque is empty.
      */
     public boolean isEmpty() {
-        // Todo
-        return true;
+        if (size == 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
