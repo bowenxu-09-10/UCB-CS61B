@@ -13,48 +13,23 @@ public class ArrayDeque<T> implements Deque<T>{
 
     }
 
-    /**
-     * Helper function, move the rest items to the right.
-     */
-    private void moveItems() {
-        for (int i = size; i > 0; i--) {
-            items[i] = items[i-1];
-        }
-    }
 
     /**
      * Resize the size of the array.
      */
     public void resize() {
-        float factor = (float) 1.5;
-        if (size > items.length / 2) {
-            T[] newAlst = (T[]) new Object[Math.round(factor * items.length)];
-            System.arraycopy(items, 0,newAlst,0,size);
-            items = newAlst;
-        } else if (size < items.length / 2 && size > 4) {
-            T[] newAlst = (T[]) new Object[Math.round(items.length / factor)];
-            System.arraycopy(items, 0,newAlst,0,size);
-            items = newAlst;
-        }
     }
 
     /**
      * Adds an item of type T to the front of the deque.
      */
     public void addFirst(T item) {
-        resize();
-        moveItems();
-        items[0] = item;
-        size++;
     }
 
     /**
      * Adds an item of type T to the back of the deque.
      */
     public void addLast(T item) {
-        resize();
-        items[size] = item;
-        size++;
     }
 
     /**
