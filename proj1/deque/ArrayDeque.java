@@ -125,8 +125,7 @@ public class ArrayDeque<T> implements Deque<T>{
      * 1 is the next item, and so forth.
      */
     public T get(int index) {
-        // Todo
-        return null;
+        return items[(index + nextFirst + 1) % items.length];
     }
 
     /**
