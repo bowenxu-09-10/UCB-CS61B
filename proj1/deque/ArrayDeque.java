@@ -19,6 +19,12 @@ public class ArrayDeque<T> implements Deque<T>{
      */
     private void copyArray(T[] newAlst) {
         // Copy the first n number util the end of the array.
+        if (nextFirst < nextLast) {
+            System.arraycopy(items, (nextFirst + 1) % items.length, newAlst, 0,
+                    nextLast - nextFirst + 1);
+            items = newAlst;
+            return;
+        }
         System.arraycopy(items, (nextFirst + 1) % items.length, newAlst, 0,
                 (items.length - nextFirst - 1));
         // Copy the rest items at the front of the array.
@@ -32,12 +38,12 @@ public class ArrayDeque<T> implements Deque<T>{
      */
     public void resize() {
         int factor = 2;
-        if (size > items.length / 2 && size > 7) {
+        if (size > items.length / 2 && size > 6) {
             T[] newAlst = (T[]) new Object[items.length * factor];
             copyArray(newAlst);
             nextFirst = items.length - 1;
             nextLast = size;
-        } else if (size < items.length / 4 && size > 7) {
+        } else if (size < items.length / 4 && items.length > 8) {
             T[] newAlst = (T[]) new Object[items.length / factor];
             copyArray(newAlst);
             nextFirst = items.length - 1;
@@ -94,8 +100,12 @@ public class ArrayDeque<T> implements Deque<T>{
      * Removes and returns the item at the front of the deque.
      */
     public T removeFirst() {
-        // Todo
-        return null;
+        resize();
+        T item = items[(nextFirst + 1) % items.length];
+        items[(nextFirst + 1) % items.length] = null;
+        nextFirst = (nextFirst + 1) % items.length;
+        size--;
+        return item;
     }
 
     /**
