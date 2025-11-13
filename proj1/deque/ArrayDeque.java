@@ -34,6 +34,9 @@ public class ArrayDeque<T> implements Deque<T>{
      * Adds an item of type T to the back of the deque.
      */
     public void addLast(T item) {
+        resize();
+        items[nextLast] = item;
+        nextLast = (items.length + nextLast + 1) % items.length;
     }
 
     /**
