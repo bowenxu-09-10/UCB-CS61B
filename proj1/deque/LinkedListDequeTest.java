@@ -80,7 +80,6 @@ public class LinkedListDequeTest {
 		// should be empty
 		assertTrue("lld1 should be empty after removal", lld1.isEmpty());
     }
-
     @Test
     /**
      * RemoveFirst test.
@@ -119,6 +118,10 @@ public class LinkedListDequeTest {
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
         lld1.addFirst(3);
 
+        lld1.removeLast();
+        lld1.removeFirst();
+        lld1.removeLast();
+        lld1.removeFirst();
         lld1.removeLast();
         lld1.removeFirst();
         lld1.removeLast();
