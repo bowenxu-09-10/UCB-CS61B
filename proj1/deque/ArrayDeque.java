@@ -92,8 +92,10 @@ public class ArrayDeque<T> implements Deque<T>{
      * Prints the items in the duque from first to last, separated by a space.
      */
     public void printDeque() {
-        // Todo
-        return;
+        for (int i = 0; i < size - 1; i++) {
+            System.out.print(get(i) + " ");
+        }
+        System.out.println(get(size - 1));
     }
 
     /**
