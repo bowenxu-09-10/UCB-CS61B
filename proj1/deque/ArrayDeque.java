@@ -7,10 +7,11 @@ import java.math.*;
 public class ArrayDeque<T> implements Deque<T>{
     private T[] items;
     private int size;
+    private int nextFirst = 0;
+    private int nextLast = 1;
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = 0;
-
     }
 
 
@@ -24,6 +25,9 @@ public class ArrayDeque<T> implements Deque<T>{
      * Adds an item of type T to the front of the deque.
      */
     public void addFirst(T item) {
+        resize();
+        items[nextFirst] = item;
+        nextFirst = (items.length + nextFirst - 1) % items.length;
     }
 
     /**
