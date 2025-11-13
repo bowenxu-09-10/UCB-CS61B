@@ -13,11 +13,28 @@ public class ArrayDeque<T> implements Deque<T>{
     }
 
     /**
+     * Helper function, move the rest items to the right.
+     */
+    private void moveItems() {
+        for (int i = size; i > 0; i--) {
+            items[i] = items[i-1];
+        }
+    }
+
+    /**
+     * Resize the size of the array.
+     */
+    public void resize() {
+
+    }
+
+    /**
      * Adds an item of type T to the front of the deque.
      */
     public void addFirst(T item) {
-        // Todo
-        return;
+        moveItems();
+        items[0] = item;
+        size++;
     }
 
     /**
