@@ -112,8 +112,12 @@ public class ArrayDeque<T> implements Deque<T>{
      * Removes and returns the item at the back of the deque.
      */
     public T removeLast() {
-        // Todo
-        return null;
+        resize();
+        T item = items[(nextLast + items.length -1) % items.length];
+        items[(nextLast + items.length -1) % items.length] = null;
+        nextLast = (nextLast + items.length -1) % items.length;
+        size--;
+        return item;
     }
 
     /**
