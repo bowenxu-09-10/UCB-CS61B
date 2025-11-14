@@ -1,16 +1,16 @@
 package deque;
 
 import edu.princeton.cs.algs4.Stopwatch;
-import org.junit.Test;
 
 public class TimeTest {
 
-    public static void printTimingTable(LinkedListDeque<Integer> Ns,
-                                         LinkedListDeque<Double> times, LinkedListDeque<Integer> opCounts) {
+    public static void printTimingTable(LinkedListDeque<Integer> ns,
+                                        LinkedListDeque<Double> times,
+                                        LinkedListDeque<Integer> opCounts) {
         System.out.printf("%12s %12s %12s %12s\n", "N", "time (s)", "# ops", "microsec/op");
         System.out.printf("------------------------------------------------------------\n");
-        for (int i = 0; i < Ns.size(); i += 1) {
-            int N = Ns.get(i);
+        for (int i = 0; i < ns.size(); i += 1) {
+            int N = ns.get(i);
             double time = times.get(i);
             int opCount = opCounts.get(i);
             double timePerOp = time / opCount * 1e6;
@@ -21,8 +21,9 @@ public class TimeTest {
     /**
      * Compute the time of LinkedListDeque addLast n times
      */
-    public static void timeCompute(int n, LinkedListDeque<Integer> Ns,
-                                   LinkedListDeque<Double> times, LinkedListDeque<Integer> opCounts) {
+    public static void timeCompute(int n, LinkedListDeque<Integer> ns,
+                                   LinkedListDeque<Double> times,
+                                   LinkedListDeque<Integer> opCounts) {
         LinkedListDeque<Integer> lst = new LinkedListDeque<>();
         for (int i = 0; i < n; i++) {
             lst.addLast(i);
