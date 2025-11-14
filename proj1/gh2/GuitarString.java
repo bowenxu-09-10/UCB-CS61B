@@ -1,10 +1,7 @@
 package gh2;
 
-import deque.ArrayDeque;
 import deque.Deque;
 import deque.LinkedListDeque;
-
-import java.util.Random;
 
 //Note: This file will not compile until you complete the Deque implementations
 public class GuitarString {
@@ -43,6 +40,7 @@ public class GuitarString {
         //       Math.random() - 0.5 to generate new random numbers for each array index.
         for (int i = 0; i < buffer.size(); i++) {
             double r = Math.random() - 0.5;
+            buffer.removeFirst();
             buffer.addLast(r);
         }
     }
