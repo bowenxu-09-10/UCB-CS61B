@@ -2,7 +2,6 @@ package deque;
 
 import javax.swing.*;
 import java.util.Iterator;
-import java.util.Objects;
 
 public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
@@ -14,10 +13,10 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
      */
     private class StuffNode {
         public T item;
-        public StuffNode next;
-        public StuffNode prev;
+        private StuffNode next;
+        private StuffNode prev;
 
-        public StuffNode(T item, StuffNode node) {
+        StuffNode(T item, StuffNode node) {
             this.item = item;
             this.next = node;
             this.prev = node;
@@ -169,7 +168,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
      */
     private class LLDIterator implements Iterator<T> {
         private int pos;
-        public LLDIterator() {
+        LLDIterator() {
             pos = 0;
         }
 
