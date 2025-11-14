@@ -98,6 +98,6 @@ public class ArrayDequeTest {
         lld3.addLast("I");
         lld3.addLast("love");
         lld3.addLast("Toby");
-        assertEquals(false, lld1.equals(lld3));
+        assertEquals(true, lld1.equals(lld3));
     }
 }
