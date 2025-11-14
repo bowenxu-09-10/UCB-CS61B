@@ -128,7 +128,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /**
-     * Gets the item at the given index, where 0 is the front,
+     * Return the item at the given index, where 0 is the front,
      * 1 is the next item, and so forth.
      */
     public T get(int index) {
@@ -172,11 +172,14 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         if (this == o) {
             return true;
         }
-        if (this.getClass() != o.getClass() || o == null) {
+        if (o == null) {
             return false;
         }
-        ArrayDeque<T> other = (ArrayDeque<T>) o;
-        if (this.size != other.size) {
+        if (!(o instanceof Deque)) {
+            return false;
+        }
+        Deque<T> other = (Deque<T>) o;
+        if (this.size() != other.size()) {
             return false;
         }
         for (int i = 0; i < size; i++) {
