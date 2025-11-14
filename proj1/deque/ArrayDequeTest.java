@@ -72,4 +72,27 @@ public class ArrayDequeTest {
         System.out.println("Printing out deque: ");
         lld1.printDeque();
     }
+
+    @Test
+    /**
+     * Check whether equals() works right.
+     */
+    public void equalsTest() {
+        ArrayDeque<String> lld1 = new ArrayDeque<>();
+        lld1.addLast("I");
+        lld1.addLast("love");
+        lld1.addLast("Toby");
+        for (String str : lld1) {
+            System.out.println(str);
+        }
+        ArrayDeque<String> lld2 = new ArrayDeque<>();
+        lld2.addLast("I");
+        lld2.addLast("love");
+        lld2.addLast("Toby");
+        for (String str : lld2) {
+            System.out.println(str);
+        }
+
+        assertEquals(true, lld1.equals(lld2));
+    }
 }
