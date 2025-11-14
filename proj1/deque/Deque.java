@@ -1,7 +1,6 @@
 package deque;
 
 import java.util.Iterator;
-import java.util.Objects;
 
 public interface Deque<T> {
 
