@@ -12,7 +12,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
      * Node that store some magical information.
      */
     private class StuffNode {
-        public T item;
+        private T item;
         private StuffNode next;
         private StuffNode prev;
 
