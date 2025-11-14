@@ -36,7 +36,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /**
      * Resize the size of the array.
      */
-    public void resize() {
+    private void resize() {
         int factor = 2;
         if (size > items.length / 2 && size > 6) {
             T[] newAlst = (T[]) new Object[items.length * factor];
@@ -186,15 +186,5 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             }
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        ArrayDeque<String> lld1 = new ArrayDeque<>();
-        lld1.addLast("I");
-        lld1.addLast("love");
-        lld1.addLast("Toby");
-        for (String str : lld1) {
-            System.out.println(str);
-        }
     }
 }
