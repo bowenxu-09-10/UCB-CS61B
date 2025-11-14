@@ -50,9 +50,4 @@ public interface Deque<T> {
      * Return an iterator.
      */
     public Iterator<T> iterator();
-
-    /**
-     * Returns whether the parameter o is equal to the Deque.
-     */
-    public boolean equals(Objects o);
 }
