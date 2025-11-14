@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.math.*;
 
-public class ArrayDeque<T> implements Deque<T>{
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
     private int nextFirst = 0;
@@ -134,8 +134,29 @@ public class ArrayDeque<T> implements Deque<T>{
      * Return an iterator.
      */
     public Iterator<T> iterator() {
-        // Todo
-        return null;
+        return new ADequeIterator();
+    }
+
+    /**
+     * Iterator
+     */
+    private class ADequeIterator implements Iterator<T> {
+        private int pos;
+        public ADequeIterator() {
+            pos = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return pos < size;
+        }
+
+        @Override
+        public T next() {
+            T item = get(pos);
+            pos++;
+            return item;
+        }
     }
 
     /**
@@ -144,5 +165,15 @@ public class ArrayDeque<T> implements Deque<T>{
     public boolean equals(Objects o) {
         // Todo
         return true;
+    }
+
+    public static void main(String[] args) {
+        ArrayDeque<String> lld1 = new ArrayDeque<>();
+        lld1.addLast("I");
+        lld1.addLast("love");
+        lld1.addLast("Toby");
+        for (String str : lld1) {
+            System.out.println(str);
+        }
     }
 }
