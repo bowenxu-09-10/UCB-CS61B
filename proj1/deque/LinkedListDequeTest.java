@@ -198,5 +198,31 @@ public class LinkedListDequeTest {
         printTimingTable(Ns, times, opCounts);
     }
 
+    @Test
+    /**
+     * Check whether equals() works right.
+     */
+    public void equalsTest() {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        lld1.addLast("I");
+        lld1.addLast("love");
+        lld1.addLast("Toby");
+        for (String str : lld1) {
+            System.out.println(str);
+        }
+        LinkedListDeque<String> lld2 = new LinkedListDeque<>();
+        lld2.addLast("I");
+        lld2.addLast("love");
+        lld2.addLast("Toby");
+        for (String str : lld2) {
+            System.out.println(str);
+        }
+        ArrayDeque<String> lld3 = new ArrayDeque<>();
+        lld3.addLast("I");
+        lld3.addLast("love");
+        lld3.addLast("Toby");
 
+        assertEquals(true, lld1.equals(lld2));
+        assertEquals(false, lld1.equals(lld3));
+    }
 }
