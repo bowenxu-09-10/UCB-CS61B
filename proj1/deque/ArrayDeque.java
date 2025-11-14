@@ -89,7 +89,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     /**
-     * Prints the items in the duque from first to last, separated by a space.
+     * Prints the items in the deque from first to last, separated by a space.
      */
     public void printDeque() {
         for (int i = 0; i < size - 1; i++) {
@@ -162,8 +162,22 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     /**
      * Returns whether the parameter o is equal to the Deque.
      */
-    public boolean equals(Objects o) {
-        // Todo
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof ArrayDeque otherDeque) {
+            if (this.size != otherDeque.size) {
+                return false;
+            }
+            for (int i = 0; i < size; i++) {
+                if (!this.get(i).equals(otherDeque.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return true;
     }
 
