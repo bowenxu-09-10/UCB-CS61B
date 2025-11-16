@@ -82,5 +82,14 @@ public class CapersRepository {
      */
     public static void celebrateBirthday(String name) {
         // TODO
+        File DOG_FILE = Utils.join(Dog.DOG_FOLDER, name);
+        if (DOG_FILE.exists()) {
+            Dog dog = Dog.fromFile(name);
+            dog.haveBirthday();
+            dog.saveDog();
+        } else {
+            System.out.println("Dog " + name + " does not exist.");
+            return;
+        }
     }
 }
