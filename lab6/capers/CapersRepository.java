@@ -23,7 +23,7 @@ public class CapersRepository {
     static final File CAPERS_FOLDER = Utils.join(CWD, ".capers");
 
     /** File that store story. */
-    static final File STORY_FILE = Utils.join(CWD, "story");
+    static final File STORY_FILE = Utils.join(CAPERS_FOLDER, "story");
 
     /**
      * Does required filesystem operations to allow for persistence.
