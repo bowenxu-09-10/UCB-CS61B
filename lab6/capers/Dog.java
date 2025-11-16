@@ -43,7 +43,7 @@ public class Dog implements Serializable{ // TODO
         // TODO (hint: look at the Utils file)
         File DOG_FILE = Utils.join(DOG_FOLDER, name);
         if (!DOG_FILE.exists()) {
-            System.out.println("Dog " + "name" + "does not exist.");
+            System.out.println("Dog " + name + " does not exist.");
             return null;
         }
         return Utils.readObject(DOG_FILE, Dog.class);
@@ -63,18 +63,15 @@ public class Dog implements Serializable{ // TODO
      */
     public void saveDog() {
         // TODO (hint: don't forget dog names are unique)
+        // Ensure the dogs directory exists
+        if (!DOG_FOLDER.exists()) {
+            CapersRepository.setupPersistence();
+        }
         File DOG_FILE = Utils.join(DOG_FOLDER, this.name);
 
         if (DOG_FILE.exists()) {
-            System.out.println("Dog name have already exist.");
+            System.out.println("Dog name has already exist.");
             return;
-        }
-
-        // Create a dogFile storing dog object.
-        try {
-            DOG_FILE.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         // Store dog's info to file
