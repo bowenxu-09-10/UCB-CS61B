@@ -63,6 +63,15 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         // TODO
+        File DOG_FILE = Utils.join(Dog.DOG_FOLDER, name);
+        if (DOG_FILE.exists()) {
+            Dog dog = Dog.fromFile(name);
+            System.out.println(dog.toString());
+            return;
+        }
+        Dog newDog = new Dog(name, breed, age);
+        newDog.saveDog();
+        System.out.println(newDog.toString());
     }
 
     /**
