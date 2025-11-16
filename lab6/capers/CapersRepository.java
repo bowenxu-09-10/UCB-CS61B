@@ -1,7 +1,10 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+
 import static capers.Utils.*;
+import static capers.Dog.*;
 
 /** A repository for Capers 
  * @author Bowen
@@ -20,6 +23,9 @@ public class CapersRepository {
     /** Main metadata folder. */
     static final File CAPERS_FOLDER = Utils.join(CWD, ".capers");
 
+    /** File that store story. */
+    static final File STORY_FOLDER = Utils.join(CWD, "story");
+
     /**
      * Does required filesystem operations to allow for persistence.
      * (creates any necessary folders or files)
@@ -30,7 +36,13 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+        try {
+            CAPERS_FOLDER.mkdir();
+            DOG_FOLDER.mkdir();
+            STORY_FOLDER.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
