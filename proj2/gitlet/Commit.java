@@ -22,5 +22,23 @@ public class Commit {
     /** The message of this Commit. */
     private String message;
 
+    /** The timestamp if this Commit. */
+    private String timeStamp;
+
+    /** The parent commit of current commit. */
+    private String parent;
+
+    /** The file current commit tracked. */
+    private String[] file;
+
+    /** The file's PID. */
+    private String[] filePID;
+
+    /** Number of tracked file. */
+    private int size;
+
     /* TODO: fill in the rest of this class. */
+    Commit(String message) {
+        this.message = message;
+    }
 }
