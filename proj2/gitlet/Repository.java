@@ -10,7 +10,9 @@ import static gitlet.Utils.*;
 /** Represents a gitlet repository.
  *  The structure of a gitlet is as follows:
  *  .gitlet/ -- top level folder for all persistent data
- *
+ *    - commit -- store commit info
+ *    - index -- store staging files
+ *    - HEAD -- store HEAD reference
  *  @author TODO
  */
 public class Repository {
@@ -26,13 +28,20 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+    /** The HEAD reference. */
+    public static final File HEAD = join(GITLET_DIR, "HEAD");
 
     /* TODO: fill in the rest of this class. */
 
     /** Create filesystem to allow for persistence. */
     public static void setUpPersistence() {
-        GITLET_DIR.mkdir();
-        Commit.COMMIT_DIR.mkdir();
+        try {
+            GITLET_DIR.mkdir();
+            Commit.COMMIT_DIR.mkdir();
+            HEAD.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** Creates a new Gitlet version-control system in the current
@@ -41,14 +50,17 @@ public class Repository {
      *  .gitlet/ -- top level folder for all persistent data
      *      - commit -- store commit info
      *      - index -- store staging files
+     *      - HEAD -- store current commit reference
      *  This will automatically start with one commit with message
      *  "initial commit".
      *  It will have a single branch "master" pointing to this
      *  initial commit.
      *  Timestamp will be 00:00:00 UTC, Thursday, 1 January 1970.
      */
-    public static void initSystem() {
+    public void initSystem() {
         setUpPersistence();
+        makeCommit();
+        writeHead();
         // Commit something
         // Call branch, and make it point to it
     }
@@ -58,6 +70,16 @@ public class Repository {
      *  a new commit.
      */
     public void makeCommit() {
+        // ToDo
+    }
+
+    /** Read Head and get the current branch reference. */
+    public String readHead() {
+        return Utils.readContentsAsString(HEAD);
+    }
+
+    /** Write current Head reference into the file. */
+    public void writeHead() {
         // ToDo
     }
 }
