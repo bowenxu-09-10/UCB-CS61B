@@ -4,6 +4,7 @@ package gitlet;
 
 import java.io.File;
 import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.HashMap;
 import java.util.HashSet;
 
 /** Represents a gitlet commit object.
@@ -33,7 +34,7 @@ public class Commit {
     private String parent;
 
     /** The file current commit tracked. */
-    private HashSet<String> fileNameToBLOB;
+    private HashMap<String, String> fileNameToBLOB;
 
     /** Number of tracked file. */
     private int size;
