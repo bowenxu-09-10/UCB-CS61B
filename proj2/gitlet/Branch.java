@@ -22,7 +22,7 @@ public class Branch {
     }
 
     /** Create a new branch file. */
-    public void newBranch(String name) {
+    private void newBranch(String name) {
         File branch = join(BRANCH_DIR, name);
         try {
             branch.createNewFile();
@@ -31,8 +31,8 @@ public class Branch {
         }
     }
 
-    // ToDo write commitPID into the branch file
-    public void writeBranch(String commitPID, String name) {
+    /** Write commit sha-1 into the branch file. */
+    private void writeBranch(String commitPID, String name) {
         File branch = join(BRANCH_DIR, name);
         writeContents(branch, commitPID);
     }
