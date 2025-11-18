@@ -59,9 +59,9 @@ public class Repository {
      */
     public void initSystem() {
         setUpPersistence();
-        readHead();
+        Branch.readHead();
         makeCommit();
-        writeHead();
+        Branch.writeHead();
         // Commit something
         // Call branch, and make it point to it
     }
@@ -74,19 +74,4 @@ public class Repository {
         // ToDo
     }
 
-    /** Read Head and get the current branch reference. */
-    public String readHead() {
-        return Utils.readContentsAsString(HEAD);
-    }
-
-    /** Write current Head reference into the file. */
-    public void writeHead() {
-        // ToDo
-    }
-
-    /** Get commit PID. */
-    public String getCommitPID() {
-        // ToDo
-        return null;
-    }
 }
