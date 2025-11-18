@@ -48,6 +48,7 @@ public class Commit implements Serializable {
     Commit() {
         this.message = "initial commit";
         this.timeStamp = new Date(0);
+        this.parent = null;
     }
 
     // ToDo: get the parent commit
@@ -70,10 +71,10 @@ public class Commit implements Serializable {
 
     /** Get parent commit. */
     public Commit getParent() {
-        File parent = join(COMMIT_DIR, this.parent);
-        if (!parent.exists()) {
+        if (this.parent == null) {
             return null;
         }
-        return readObject(parent, Commit.class);
+        File parentFile = join(COMMIT_DIR, this.parent);
+        return readObject(parentFile, Commit.class);
     }
 }
