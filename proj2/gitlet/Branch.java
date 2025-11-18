@@ -21,9 +21,15 @@ public class Branch {
         writeContents(HEAD, readHead());
     }
 
+    /** Update the existed branch with new commitPID. */
+    public void updateBranch(String branchName, Commit commit) {
+        String commitPID = sha1(commit);
+        writeBranch(commitPID, branchName);
+    }
+
     /** Create a new branch file. */
-    private void newBranch(String name) {
-        File branch = join(BRANCH_DIR, name);
+    private void newBranch(String branchName) {
+        File branch = join(BRANCH_DIR, branchName);
         try {
             branch.createNewFile();
         } catch (IOException e) {
@@ -32,8 +38,8 @@ public class Branch {
     }
 
     /** Write commit sha-1 into the branch file. */
-    private void writeBranch(String commitPID, String name) {
-        File branch = join(BRANCH_DIR, name);
+    private void writeBranch(String commitPID, String branchName) {
+        File branch = join(BRANCH_DIR, branchName);
         writeContents(branch, commitPID);
     }
 }
