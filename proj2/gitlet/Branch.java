@@ -22,13 +22,13 @@ public class Branch {
     }
 
     /** Update the existed branch with new commitPID. */
-    public void updateBranch(String branchName, Commit commit) {
+    public static void updateBranch(String branchName, Commit commit) {
         String commitPID = sha1(commit);
         writeBranch(commitPID, branchName);
     }
 
     /** Create a new branch file. */
-    private void newBranch(String branchName) {
+    public static void newBranch(String branchName) {
         File branch = join(BRANCH_DIR, branchName);
         try {
             branch.createNewFile();
@@ -38,7 +38,7 @@ public class Branch {
     }
 
     /** Write commit sha-1 into the branch file. */
-    private void writeBranch(String commitPID, String branchName) {
+    public static void writeBranch(String commitPID, String branchName) {
         File branch = join(BRANCH_DIR, branchName);
         writeContents(branch, commitPID);
     }
