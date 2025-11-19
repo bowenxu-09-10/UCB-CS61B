@@ -11,20 +11,27 @@ public class Branch {
     public static final File HEAD = join(Repository.GITLET_DIR, "HEAD");
     public static final File BRANCH_DIR = join(Repository.GITLET_DIR, "branches");
 
-    /** Read Head and get the current branch name. */
-    public static String readHead() {
+    /** Read Head to get the current branch name. */
+    private static String readHeadBranch() {
         return readContentsAsString(HEAD);
     }
 
     /** Write current branch name into the HEAD. */
-    public static void writeHead() {
-        writeContents(HEAD, readHead());
+    private static void writeHead() {
+        writeContents(HEAD, readHeadBranch());
     }
 
     /** Update the existed branch with new commitPID. */
     public static void updateBranch(String branchName, Commit commit) {
         String commitPID = sha1(commit);
         writeBranch(commitPID, branchName);
+    }
+
+    /** Return HEAD branch's SHA-1. */
+    public static String getHeadBranch() {
+        String branchName = readContentsAsString(Branch.HEAD);
+        File head = join(Branch.BRANCH_DIR, branchName);
+        return readContentsAsString(head);
     }
 
     /** Create a new branch file. */
