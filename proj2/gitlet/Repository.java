@@ -2,10 +2,11 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static gitlet.Utils.*;
-
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
  *  The structure of a gitlet is as follows:
@@ -13,17 +14,9 @@ import static gitlet.Utils.*;
  *    - commit -- store commit info
  *    - index -- store staging files
  *    - HEAD -- store HEAD reference
- *  @author TODO
+ *  @author Bowen
  */
 public class Repository {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
-
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
@@ -31,7 +24,10 @@ public class Repository {
     /** The index file acts as staging area. */
     public static final File INDEX = join(GITLET_DIR, "index");
 
-    /* TODO: fill in the rest of this class. */
+    /** A Map for staged file for addition. */
+    private Map<String, String> stagedAddition;
+    /** A Set for staged file for removal. */
+    private Set<String> stagedRemoval;
 
     /** Create filesystem to allow for persistence. */
     public static void setUpPersistence() {
@@ -74,5 +70,19 @@ public class Repository {
      */
     public void makeCommit() {
         // ToDo
+    }
+
+    /** Add new created files or edited files to staging area. */
+    public static void addFile(String[] args) {
+        for (int i = 1; i < args.length; i++) {
+            File curr = join(CWD, args[i]);
+            if (!curr.exists()) {
+                System.out.println("File does not exist.");
+                System.exit(0);
+            }
+        }
+        Commit head = Commit.getHeadCommit();
+        HashMap tractedFile = head.fileNameToBLOB;
+
     }
 }
