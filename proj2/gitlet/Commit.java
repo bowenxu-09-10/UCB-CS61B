@@ -4,7 +4,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.Date;
 import java.util.HashMap;
 import static gitlet.Utils.*;
 
@@ -12,18 +12,11 @@ import static gitlet.Utils.*;
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author Bowen
  */
 public class Commit implements Serializable {
     /** The commit directory in .gitlet. */
     public static final File COMMIT_DIR = join(Repository.GITLET_DIR, "commit");
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
 
     /** The message of this Commit. */
     private String message;
@@ -37,8 +30,6 @@ public class Commit implements Serializable {
     /** The file current commit tracked. */
     private HashMap<String, String> fileNameToBLOB;
 
-
-    /* TODO: fill in the rest of this class. */
     Commit(String message, String parent) {
         this.message = message;
         this.parent = parent;
@@ -51,23 +42,13 @@ public class Commit implements Serializable {
         this.parent = null;
     }
 
-    // ToDo: get the parent commit
     // ToDo: Somehow make everything in one go so that
     //       it can be called by makeCommit() in Repository
-    // ToDo: Track and save new file in fileNameToBlob that parent didn't track
 
     /** Commit a commit and set up EVERYTHING in one go. */
     public void makeCommit() {
         // ToDo
     }
-
-    // ToDo: check staging area, if there's same filename but different Blob,
-    //       update fileNameToBlob or if there's same Blob but differnet name,
-    //       remove the former name and add current name.
-
-    // ToDo: add file that staged add.
-
-    // ToDo: remove the file that staged deleted.
 
     /** Get parent commit. */
     public Commit getParent() {
@@ -76,5 +57,13 @@ public class Commit implements Serializable {
         }
         File parentFile = join(COMMIT_DIR, this.parent);
         return readObject(parentFile, Commit.class);
+    }
+
+    /** Copy its parent tracking file and update it according to
+     *  the staging area. */
+    private void updateFile() {
+        Commit parent = this.getParent();
+        fileNameToBLOB = parent.fileNameToBLOB;
+        // ToDo: check staging area. add or remove.
     }
 }
