@@ -12,19 +12,13 @@ public class Branch {
     public static final File BRANCH_DIR = join(Repository.GITLET_DIR, "branches");
 
     /** Read Head to get the current branch name. */
-    private static String readHeadBranch() {
+    private static String readHead() {
         return readContentsAsString(HEAD);
     }
 
     /** Write current branch name into the HEAD. */
-    private static void writeHead() {
-        writeContents(HEAD, readHeadBranch());
-    }
-
-    /** Update the existed branch with new commitPID. */
-    public static void updateBranch(String branchName, Commit commit) {
-        String commitPID = sha1(commit);
-        writeBranch(commitPID, branchName);
+    private static void writeHead(String branchName) {
+        writeContents(HEAD, branchName);
     }
 
     /** Return HEAD branch's SHA-1. */
@@ -39,14 +33,15 @@ public class Branch {
         File branch = join(BRANCH_DIR, branchName);
         try {
             branch.createNewFile();
+            writeHead(branchName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /** Write commit sha-1 into the branch file. */
-    public static void writeBranch(String commitPID, String branchName) {
-        File branch = join(BRANCH_DIR, branchName);
+    /** Receive commitPID and write it into the branch file. */
+    public static void writeBranch(String commitPID) {
+        File branch = join(BRANCH_DIR, readHead());
         writeContents(branch, commitPID);
     }
 }
