@@ -28,6 +28,8 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+    /** The index file acts as staging area. */
+    public static final File INDEX = join(GITLET_DIR, "index");
 
     /* TODO: fill in the rest of this class. */
 
@@ -37,6 +39,7 @@ public class Repository {
             GITLET_DIR.mkdir();
             Commit.COMMIT_DIR.mkdir();
             Branch.HEAD.createNewFile();
+            INDEX.createNewFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +61,8 @@ public class Repository {
      */
     public void initCommend() {
         setUpPersistence();
-        Commit intialCommit = new Commit();
+        Commit initialCommit = new Commit();
+        Branch.newBranch("Master");
         // ToDo: create a master branch, and save current commit.
 
     }
