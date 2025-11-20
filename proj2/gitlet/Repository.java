@@ -20,9 +20,6 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
-    /** Staging area. */
-    private static Stage stageArea;
-
     /** Create filesystem to allow for persistence. */
     public static void setUpPersistence() {
         try {
@@ -71,7 +68,7 @@ public class Repository {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        stageArea.addStage(fileName);
+        Stage.addStage(fileName);
     }
 
     /** Check whether current folder is gitleted folder. */
