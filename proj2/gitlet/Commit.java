@@ -34,7 +34,7 @@ public class Commit implements Serializable {
     private String secondParent;
 
     /** The file current commit tracked. */
-    public HashMap<String, String> fileNameToBLOB;
+    private HashMap<String, String> fileNameToBLOB;
 
     Commit(String message, String parent, String secondParent) {
         this.message = message;
@@ -127,5 +127,10 @@ public class Commit implements Serializable {
     /** Get message. */
     public String getMessage() {
         return message;
+    }
+
+    /** Get fileNameToBlob. */
+    public HashMap<String, String> getFileNameToBLOB() {
+        return fileNameToBLOB;
     }
 }

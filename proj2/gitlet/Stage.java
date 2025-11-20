@@ -2,9 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -44,11 +42,12 @@ public class Stage implements Serializable {
      *  True for is the same as committed. */
     private boolean checkSameCommit(String fileName) {
         Commit head = Commit.getHeadCommit();
-        if (head.fileNameToBLOB == null) {
+        if (head.getFileNameToBLOB() == null) {
             return false;
         }
-        HashMap<String, String> fileTracked = head.fileNameToBLOB;
-        return fileTracked.containsValue(saveFile(fileName));
+        HashMap<String, String> fileTracked = head.getFileNameToBLOB();
+        String id = saveFile(fileName);
+        return fileTracked.containsValue(id);
     }
 
     /** Add file to staging area. If added one is the same as commited, but in staged area,
@@ -80,7 +79,7 @@ public class Stage implements Serializable {
         }
         // If the file is tracked, then stage it removal and delete it.
         Commit head = Commit.getHeadCommit();
-        if (head.fileNameToBLOB.containsKey(fileName)) {
+        if (head.getFileNameToBLOB().containsKey(fileName)) {
             stagedRemoval.add(fileName);
             File removedFile = join(Repository.CWD, fileName);
             removedFile.delete();
@@ -108,5 +107,34 @@ public class Stage implements Serializable {
     /** Save staging area into a file. */
     public static void saveStage(Stage stage) {
         writeObject(INDEX, stage);
+    }
+
+    /** Print status. */
+    public void printStatus() {
+        System.out.println("=== Branches ===");
+        Branch.printBranch();
+        System.out.println();
+        System.out.println("=== Staged Files ===");
+        SortedSet<String> addedFileName = new TreeSet<>(stagedAddition.keySet());
+        if (addedFileName.size() == 0) {
+            System.out.println();
+        }
+        for (String file : addedFileName) {
+            System.out.println(file);
+            System.out.println();
+        }
+        System.out.println("=== Removed Files ===");
+        SortedSet<String> removedFileName = new TreeSet<>(stagedRemoval);
+        if (removedFileName.size() == 0) {
+            System.out.println();
+        }
+        for (String file : removedFileName) {
+            System.out.println(file);
+            System.out.println();
+        }
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
     }
 }

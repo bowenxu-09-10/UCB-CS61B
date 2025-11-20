@@ -71,7 +71,9 @@ public class Repository {
             System.out.println("No changes added to the commit.");
             return;
         }
-        Commit newCommit = new Commit(test, Commit.getHeadCommit().getCommitID(), null);
+        Commit head = Commit.getHeadCommit();
+        String headID = head.getCommitID();
+        Commit newCommit = new Commit(test, headID, null);
         newCommit.makeCommit();
         newCommit.saveCommit();
         Branch.writeBranch(newCommit.getCommitID());
@@ -128,6 +130,7 @@ public class Repository {
 
     /** Log all the message. */
     public static void globalLogCommend() {
+        checkFolderGitleted();
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);
@@ -140,16 +143,21 @@ public class Repository {
     }
 
     /** Find commit with given message. */
-    public static void findCommend(String[] args) {
-
+    public static void findCommend(String message) {
+        checkFolderGitleted();
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);
-            System.out.println("===");
-            System.out.println("commit " + curr.getCommitID());
-            System.out.println("Date: " + curr.getTimeStamp());
-            System.out.println(curr.getMessage());
-            System.out.println();
+            if (curr.getMessage().equals(message)) {
+                System.out.println(fileName);
+            }
         }
+    }
+
+    /** Print status */
+    public static void printStatus() {
+        checkFolderGitleted();
+        Stage stage = Stage.load();
+        stage.printStatus();
     }
 }

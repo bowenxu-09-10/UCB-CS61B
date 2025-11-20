@@ -1,7 +1,7 @@
 package gitlet;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author Bowen
  */
 public class Main {
 
@@ -13,19 +13,32 @@ public class Main {
 //            System.out.println("Please enter a command.");
 //            System.exit(0);
 //        }
-        String firstArg = "rm";
+        String firstArg = "commit";
         switch(firstArg) {
             case "init":
                 Repository.initCommend();
                 break;
             case "add":
-                Repository.addCommend("test");
+                Repository.addCommend("test2");
                 break;
             case "commit":
-                Repository.makeCommit("test");
+                Repository.makeCommit("add test1 remove test1");
                 break;
             case "rm":
-                Repository.rmCommend("test");
+                Repository.rmCommend("test1");
+                break;
+            case "log":
+                Repository.logCommend();
+                break;
+            case "global-log":
+                Repository.globalLogCommend();
+                break;
+            case "find":
+                Repository.findCommend("initial commit");
+                break;
+            case "status":
+                Repository.printStatus();
+                break;
         }
     }
 }
