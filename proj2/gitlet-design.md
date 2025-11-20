@@ -1,13 +1,40 @@
 # Gitlet Design Document
 
-**Name**:
+**Name**: Bowen 
 
 ## Classes and Data Structures
 
+### Stage
+
+#### Field
+
+1. stagedAddition: A Map for staged file for addition.
+2. stagedRemoval: A Set for staged file for removal.
+3. saveFile(): Save file as blob file, and return its pid.
+4. checkSameCommit(): Check if current file added is the same as commited. True for is the same as committed
+5. addStage(): Add file to staging area. If added one is the same as commited, but in staged area, then remove it from 
+   stagedAddition.
+6. removeStage(): Remove file to staging area, if file is in the stage area then unstage it. If the file is tracked, 
+   then staged for removal.
+7. getStagedAddition(): Get staded for addition hashmap.
+8. getStagedRemoval(): Get staded for removal hashmap.
+9. clear(): Clear all the stage area.
+
 ### Repository
 
-1. setUpPersistence(): Create dirs and files allow persistent data.
-2. initSystem(): Create a version control system. 
+#### Fields
+
+1. stagedAddition: A Map for staged file for addition.
+2. stagedRemoval: A Set for staged file for removal. 
+3. setUpPersistence(): Create dirs and files allow persistent data. 
+4. initSystem(): Create a version control system.
+5. addFile(): Add new created file or edited file to staging area.
+
+### Add
+
+#### Fields
+
+1. stagedAddition: A HashMap for files staging for addition.
 
 ### Commit
 
@@ -20,6 +47,7 @@
 5. Commit()：Initial commit, set message = "intial commit", timestamp = 00:00:00 UTC, Thursday, 1 January 1970
 6. Commit(String message, String parent): new commit
 7. getParent(): Get parent commit.
+8. updateFile: Copy its parent tracking file and update it according to the staging area.
 
 ### Branch
 

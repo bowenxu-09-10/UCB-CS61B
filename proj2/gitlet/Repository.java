@@ -47,26 +47,33 @@ public class Repository {
             System.exit(0);
         }
         setUpPersistence();
+        Stage initStage = new Stage();
+        Stage.saveStage(initStage);
         Commit initialCommit = new Commit();
         initialCommit.saveCommit();
         Branch.newBranch("Master");
         Branch.writeBranch(sha1((Object) serialize(initialCommit)));
-
     }
 
     /** Saves a snapshot of tracked files in the current commit and
      *  staging area so they can be restored at a later time, creating
      *  a new commit.
      */
-    public static void makeCommit(String[] args) {
+    public static void makeCommit(String test) {
         // No log message
-        if (args.length == 1) {
-            System.out.println("Please enter a commit message.");
-            System.exit(0);
+//        if (args.length == 1) {
+//            System.out.println("Please enter a commit message.");
+//            System.exit(0);
+//        }
+        Stage stage = Stage.load();
+        if (stage.getStagedAddition().isEmpty() && stage.getStagedRemoval().isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            return;
         }
-        Commit newCommit = new Commit(args[1], sha1(serialize(Commit.getHeadCommit())));
+        Commit newCommit = new Commit(test, sha1(serialize(Commit.getHeadCommit())));
         newCommit.makeCommit();
         newCommit.saveCommit();
+        Branch.writeBranch(sha1((Object) serialize(newCommit)));
     }
 
     /** Add new created files or edited files to staging area. */
@@ -77,7 +84,16 @@ public class Repository {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        Stage.addStage(fileName);
+        Stage stage = Stage.load();
+        stage.addStage(fileName);
+    }
+
+    /** Remove files. */
+    public static void rmCommend(String fileName) {
+        checkFolderGitleted();
+        File file = join(CWD, fileName);
+        Stage stage = Stage.load();
+        stage.removeStage(fileName);
     }
 
     /** Check whether current folder is gitleted folder. */

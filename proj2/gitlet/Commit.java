@@ -19,7 +19,7 @@ import static gitlet.Utils.*;
  */
 public class Commit implements Serializable {
     /** The commit directory in .gitlet. */
-    public static final File COMMIT_DIR = join(Repository.GITLET_DIR, "commit");
+    public static final File COMMIT_DIR = join(Repository.GITLET_DIR, "commits");
 
     /** The message of this Commit. */
     private String message;
@@ -43,6 +43,8 @@ public class Commit implements Serializable {
         this.message = "initial commit";
         this.timeStamp = new Date(0);
         this.parent = null;
+        Stage stage = Stage.load();
+        System.out.println("Before commit: " + stage.getStagedAddition());
     }
 
     /** Commit a commit and set up EVERYTHING in one go. */
@@ -62,26 +64,27 @@ public class Commit implements Serializable {
     /** Copy its parent tracking file and update it according to
      *  the staging area. */
     private void updateFile() {
-        Commit parent = this.getParent();
-        HashMap<String, String> parentFileTrack = parent.fileNameToBLOB;
-        // Copy parent Commit file map.
-        this.fileNameToBLOB = new HashMap<>(fileNameToBLOB);
-        for (String fileName : fileNameToBLOB.keySet()) {
-            Set<String> stagedRemoval = Stage.getStagedRemoval();
-            HashMap<String, String> stagedAdditon = Stage.getStagedAddition();
 
-            if (stagedAdditon.isEmpty() && stagedRemoval.isEmpty()) {
-                System.out.println("No changes added to the commit.");
-                System.exit(0);
-            }
-            // Remove
-            if (stagedRemoval.contains(fileName)) {
-                fileNameToBLOB.remove(fileName);
-            }
-            // Addition
-            if (stagedAdditon.containsKey(fileName)) {
-                fileNameToBLOB.put(fileName, Stage.saveAndGetFilePID(fileName));
-            }
+        Stage stage = readObject(Stage.INDEX, Stage.class);
+        HashMap<String, String> stagedAdditon = stage.getStagedAddition();
+        Set<String> stagedRemoval = stage.getStagedRemoval();
+
+        Commit parent = this.getParent();
+        if (parent.fileNameToBLOB == null) {
+            this.fileNameToBLOB = new HashMap<>(stagedAdditon);
+            return;
+        }
+
+        // Copy parent Commit file map.
+        this.fileNameToBLOB = new HashMap<>(parent.fileNameToBLOB);
+
+        // Remove
+        for (String fileName : stagedRemoval) {
+            this.fileNameToBLOB.remove(fileName);
+        }
+        // Addition
+        for (String fileName : stagedRemoval) {
+            this.fileNameToBLOB.put(fileName, stage.saveAndGetFilePID(fileName));
         }
     }
 
@@ -94,8 +97,10 @@ public class Commit implements Serializable {
 
     /** Save commit into a file to make persistence. */
     public void saveCommit() {
-        this.timeStamp = new Date();
-        File commit = join(COMMIT_DIR, sha1(this));
+        if (timeStamp == null) {
+            this.timeStamp = new Date();
+        }
+        File commit = join(COMMIT_DIR, sha1((Object) serialize(this)));
         try {
             commit.createNewFile();
         } catch (IOException e) {

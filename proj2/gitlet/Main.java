@@ -9,19 +9,23 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        if (args.length == 0) {
-            System.out.println("Please enter a command.");
-            System.exit(0);
-        }
-        String firstArg = args[0];
+//        if (args.length == 0) {
+//            System.out.println("Please enter a command.");
+//            System.exit(0);
+//        }
+        String firstArg = "rm";
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
+                Repository.initCommend();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                Repository.addCommend("test");
                 break;
-            // TODO: FILL THE REST IN
+            case "commit":
+                Repository.makeCommit("test");
+                break;
+            case "rm":
+                Repository.rmCommend("test");
         }
     }
 }

@@ -1,50 +1,61 @@
 package gitlet;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import static gitlet.Utils.*;
 
-public class Stage {
+public class Stage implements Serializable {
     /** A Map for staged file for addition. */
-    private static HashMap<String, String> stagedAddition;
+    private HashMap<String, String> stagedAddition;
     /** A Set for staged file for removal. */
-    private static Set<String> stagedRemoval;
+    private Set<String> stagedRemoval;
 
     /** The index file acts as staging area. */
     public static final File INDEX = join(Repository.GITLET_DIR, "index");
+    Stage() {
+        this.stagedAddition = new HashMap<>();
+        this.stagedRemoval = new HashSet<>();
+    }
+    /** Load stage index content to this stage. */
+    public static Stage load() {
+        if (INDEX.length() == 0) {
+            return new Stage();
+        }
+        return readObject(INDEX, Stage.class);
+    }
 
     /** Save file as blob file, and return its pid. */
-    private static String saveFile(String fileName) {
+    private String saveFile(String fileName) {
         // Read contents in file and make a blob.
         Blob blob = new Blob(fileName);
         return blob.saveBlob();
     }
 
+    /** Save file as blob file, and return its pid. */
+    public String saveAndGetFilePID(String fileName) {
+        return saveFile(fileName);
+    }
+
     /** Check if current file added is the same as commited.
      *  True for is the same as committed. */
-    private static boolean checkSameCommit(String fileName) {
+    private boolean checkSameCommit(String fileName) {
         Commit head = Commit.getHeadCommit();
+        if (head.fileNameToBLOB == null) {
+            return false;
+        }
         HashMap<String, String> fileTracked = head.fileNameToBLOB;
         return fileTracked.containsValue(saveFile(fileName));
     }
 
-    /** Check if current file added is the same as staged.
-     *  True for is the same as committed. */
-    private static boolean checkSameStage(String fileName) {
-        Commit head = Commit.getHeadCommit();
-        HashMap<String, String> fileTracted = head.fileNameToBLOB;
-        return fileTracted.containsValue(saveFile(fileName));
-    }
-
     /** Add file to staging area. If added one is the same as commited, but in staged area,
      *  then remove it from stagedAddition. */
-    public static void addStage(String fileName) {
+    public void addStage(String fileName) {
         // If file added is staged for removal, then remove it from remove staging area.
-        if (stagedRemoval.contains(fileName)) {
-            stagedRemoval.remove(fileName);
-        }
+        stagedRemoval.remove(fileName);
         // If added one is the same as commited, remove it from stagedAddition
         if (checkSameCommit(fileName)) {
             if (stagedAddition.containsValue(saveFile(fileName))) {
@@ -52,16 +63,19 @@ public class Stage {
                 return;
             }
         }
-
-        stagedAddition.put(fileName, sha1(fileName));
+        File file = join(Repository.CWD,fileName);
+        this.stagedAddition.put(fileName, sha1((Object) readContents(file)));
+        System.out.println(stagedAddition); // Todo: delete it
+        saveStage(this);
     }
 
     /** Remove file to staging area, if file is in the stage area then unstage it.
      *  If the file is tracked, then staged for removal. */
-    public static void removeStage(String fileName) {
+    public void removeStage(String fileName) {
         // If the file is staged, then unstage.
         if (stagedAddition.containsKey(fileName)) {
             stagedAddition.remove(fileName);
+            saveStage(this);
             return;
         }
         // If the file is tracked, then stage it removal and delete it.
@@ -70,6 +84,7 @@ public class Stage {
             stagedRemoval.add(fileName);
             File removedFile = join(Repository.CWD, fileName);
             removedFile.delete();
+            saveStage(this);
             return;
         }
         System.out.println("No reason to remove the file.");
@@ -77,18 +92,21 @@ public class Stage {
     }
 
     /** Get staded for addition hashmap. */
-    public static HashMap<String, String> getStagedAddition() {
+    public HashMap<String, String> getStagedAddition() {
         return stagedAddition;
     }
 
     /** Get staded for removal hashmap. */
-    public static Set<String> getStagedRemoval() {
+    public  Set<String> getStagedRemoval() {
         return stagedRemoval;
     }
 
     /** Clear all the stage area. */
     public static void clear() {
-        stagedAddition = null;
-        stagedRemoval = null;
+        saveStage(new Stage());
+    }
+    /** Save staging area into a file. */
+    public static void saveStage(Stage stage) {
+        writeObject(INDEX, stage);
     }
 }
