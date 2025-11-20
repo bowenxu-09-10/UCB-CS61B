@@ -26,8 +26,8 @@ public class Stage {
      *  True for is the same as committed. */
     private static boolean checkSameCommit(String fileName) {
         Commit head = Commit.getHeadCommit();
-        HashMap<String, String> fileTracted = head.fileNameToBLOB;
-        return fileTracted.containsValue(saveFile(fileName));
+        HashMap<String, String> fileTracked = head.fileNameToBLOB;
+        return fileTracked.containsValue(saveFile(fileName));
     }
 
     /** Check if current file added is the same as staged.
@@ -41,11 +41,18 @@ public class Stage {
     /** Add file to staging area. If added one is the same as commited, but in staged area,
      *  then remove it from stagedAddition. */
     public static void addStage(String fileName) {
+        // If file added is staged for removal, then remove it from remove staging area.
+        if (stagedRemoval.contains(fileName)) {
+            stagedRemoval.remove(fileName);
+        }
+        // If added one is the same as commited, remove it from stagedAddition
         if (checkSameCommit(fileName)) {
             if (stagedAddition.containsValue(saveFile(fileName))) {
                 stagedAddition.remove(fileName);
+                return;
             }
         }
+
         stagedAddition.put(fileName, sha1(fileName));
     }
 
@@ -57,11 +64,12 @@ public class Stage {
             stagedAddition.remove(fileName);
             return;
         }
-        // If the file is tracked, then stage it removal.
+        // If the file is tracked, then stage it removal and delete it.
         Commit head = Commit.getHeadCommit();
         if (head.fileNameToBLOB.containsKey(fileName)) {
             stagedRemoval.add(fileName);
-            
+            File removedFile = join(Repository.CWD, fileName);
+            removedFile.delete();
             return;
         }
         System.out.println("No reason to remove the file.");
