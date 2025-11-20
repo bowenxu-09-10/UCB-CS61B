@@ -28,7 +28,7 @@ public class Commit implements Serializable {
     private String parent;
 
     /** The file current commit tracked. */
-    private HashMap<String, String> fileNameToBLOB;
+    public HashMap<String, String> fileNameToBLOB;
 
     Commit(String message, String parent) {
         this.message = message;
@@ -64,6 +64,7 @@ public class Commit implements Serializable {
     private void updateFile() {
         Commit parent = this.getParent();
         fileNameToBLOB = parent.fileNameToBLOB;
+
         // ToDo: check staging area. add or remove.
     }
 
