@@ -70,10 +70,10 @@ public class Repository {
             System.out.println("No changes added to the commit.");
             return;
         }
-        Commit newCommit = new Commit(test, sha1(serialize(Commit.getHeadCommit())));
+        Commit newCommit = new Commit(test, Commit.getHeadCommit().getCommitID(), null);
         newCommit.makeCommit();
         newCommit.saveCommit();
-        Branch.writeBranch(sha1((Object) serialize(newCommit)));
+        Branch.writeBranch(newCommit.getCommitID());
     }
 
     /** Add new created files or edited files to staging area. */
@@ -101,6 +101,27 @@ public class Repository {
         if (!GITLET_DIR.exists()) {
             System.out.println("Not in an initialized Gitlet directory.");
             System.exit(0);
+        }
+    }
+
+    /** Log all the message. */
+    public static void logCommend() {
+        checkFolderGitleted();
+        Commit head = Commit.getHeadCommit();
+        Commit curr = head;
+        System.out.println("===");
+        System.out.println("commit " + curr.getCommitID());
+        System.out.println("Date: " + curr.getTimeStamp());
+        System.out.println(curr.getMessage());
+        System.out.println();
+        // Todo: If have two parent commit, add one line. merged ...
+        while (curr.getParent() != null) {
+            curr = curr.getParent();
+            System.out.println("===");
+            System.out.println("commit " + curr.getCommitID());
+            System.out.println("Date: " + curr.getTimeStamp());
+            System.out.println(curr.getMessage());
+            System.out.println();
         }
     }
 }
