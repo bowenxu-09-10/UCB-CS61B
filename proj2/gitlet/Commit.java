@@ -33,9 +33,6 @@ public class Commit implements Serializable {
     /** The second parent of current commit. (It'll happen in merge.) */
     private String secondParent;
 
-    /** The sha-1 id of current commit. */
-    private String commitID;
-
     /** The file current commit tracked. */
     public HashMap<String, String> fileNameToBLOB;
 
@@ -51,8 +48,6 @@ public class Commit implements Serializable {
         this.timeStamp = new Date(0);
         this.parent = null;
         this.secondParent = null;
-        Stage stage = Stage.load();
-        System.out.println("Before commit: " + stage.getStagedAddition());
     }
 
     /** Commit a commit and set up EVERYTHING in one go. */
@@ -108,6 +103,7 @@ public class Commit implements Serializable {
         if (timeStamp == null) {
             this.timeStamp = new Date();
         }
+
         File commit = join(COMMIT_DIR, getCommitID());
         try {
             commit.createNewFile();
@@ -120,8 +116,7 @@ public class Commit implements Serializable {
 
     /** Get the given commit's sha-1. */
     public String getCommitID() {
-        commitID = sha1((Object) serialize(this));
-        return commitID;
+        return sha1((Object) serialize(this));
     }
 
     /** Get timestamp. */
