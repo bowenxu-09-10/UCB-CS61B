@@ -48,16 +48,25 @@ public class Repository {
         }
         setUpPersistence();
         Commit initialCommit = new Commit();
+        initialCommit.saveCommit();
         Branch.newBranch("Master");
-        Branch.writeBranch(sha1(initialCommit));
+        Branch.writeBranch(sha1((Object) serialize(initialCommit)));
+
     }
 
     /** Saves a snapshot of tracked files in the current commit and
      *  staging area so they can be restored at a later time, creating
      *  a new commit.
      */
-    public void makeCommit() {
-        // ToDo
+    public static void makeCommit(String[] args) {
+        // No log message
+        if (args.length == 1) {
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
+        Commit newCommit = new Commit(args[1], sha1(serialize(Commit.getHeadCommit())));
+        newCommit.makeCommit();
+        newCommit.saveCommit();
     }
 
     /** Add new created files or edited files to staging area. */
