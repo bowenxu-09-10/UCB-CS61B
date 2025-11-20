@@ -28,6 +28,7 @@ public class Repository {
             Branch.HEAD.createNewFile();
             Branch.BRANCH_DIR.mkdirs();
             Stage.INDEX.createNewFile();
+            Blob.BLOB_FOLDER.mkdir();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -127,6 +128,20 @@ public class Repository {
 
     /** Log all the message. */
     public static void globalLogCommend() {
+        for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
+            File file = join(Commit.COMMIT_DIR, fileName);
+            Commit curr = readObject(file, Commit.class);
+            System.out.println("===");
+            System.out.println("commit " + curr.getCommitID());
+            System.out.println("Date: " + curr.getTimeStamp());
+            System.out.println(curr.getMessage());
+            System.out.println();
+        }
+    }
+
+    /** Find commit with given message. */
+    public static void findCommend(String[] args) {
+
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);

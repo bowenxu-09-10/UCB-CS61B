@@ -44,4 +44,15 @@ public class Branch {
         File branch = join(BRANCH_DIR, readHead());
         writeContents(branch, commitPID);
     }
+
+    /** Print all the branches. */
+    public static void printBranch() {
+        for (String fileName : plainFilenamesIn(BRANCH_DIR)) {
+            if (fileName.equals(readHead())) {
+                System.out.println("*" + fileName);
+            } else {
+                System.out.println(fileName);
+            }
+        }
+    }
 }
