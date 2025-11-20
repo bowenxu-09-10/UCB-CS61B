@@ -49,6 +49,25 @@ public class Stage {
         stagedAddition.put(fileName, sha1(fileName));
     }
 
+    /** Remove file to staging area, if file is in the stage area then unstage it.
+     *  If the file is tracked, then staged for removal. */
+    public static void removeStage(String fileName) {
+        // If the file is staged, then unstage.
+        if (stagedAddition.containsKey(fileName)) {
+            stagedAddition.remove(fileName);
+            return;
+        }
+        // If the file is tracked, then stage it removal.
+        Commit head = Commit.getHeadCommit();
+        if (head.fileNameToBLOB.containsKey(fileName)) {
+            stagedRemoval.add(fileName);
+            
+            return;
+        }
+        System.out.println("No reason to remove the file.");
+        System.exit(0);
+    }
+
     /** Get staded for addition hashmap. */
     public static HashMap<String, String> getStagedAddition() {
         return stagedAddition;
