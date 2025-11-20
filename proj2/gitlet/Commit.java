@@ -123,4 +123,9 @@ public class Commit implements Serializable {
         commitID = sha1((Object) serialize(this));
         return commitID;
     }
+
+    /** Get timestamp. */
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
 }
