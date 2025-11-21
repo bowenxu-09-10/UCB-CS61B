@@ -1,6 +1,10 @@
 package gitlet;
 
-import static gitlet.Utils.plainFilenamesIn;
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import static gitlet.Utils.*;
 
 public class Checkout {
 
@@ -14,10 +18,36 @@ public class Checkout {
 
     }
 
-    private static void checkoutCommit(String[] args) {
-        if (!(checkCommendFormat(args) || checkPrefix(args[1]).equals(""))) {
-            System.exit(0);
+    private static void checkoutCommit() {
+        String commitID = checkPrefix("25e7ffa38a235de");
+        // Check is the commend legal. Todo: uncomment
+//        if (!(checkCommendFormat(args) || commitID.equals(""))) {
+//            System.exit(0);
+//        }
+//        File commitFile = Utils.join(Commit.COMMIT_DIR, commitID);
+//        Commit commit = readObject(commitFile, Commit.class);
+//        String fileName = args[3];
+//        HashMap<String, String> blobs = commit.getFileNameToBLOB();
+//        if (!blobs.containsKey(fileName)) {
+//            System.out.println("File does not exist in that commit.");
+//        }
+//        File file = join(Repository.CWD, fileName);
+//        File replaceFile = join(Blob.BLOB_FOLDER, blobs.get(fileName));
+//        byte[] content = readContents(replaceFile);
+//        writeContents(file, content);
+        // Todo: delete it
+        File commitFile = Utils.join(Commit.COMMIT_DIR, commitID);
+        Commit commit = readObject(commitFile, Commit.class);
+        String fileName = "test1";
+        HashMap<String, String> blobs = commit.getFileNameToBLOB();
+        if (!blobs.containsKey(fileName)) {
+            System.out.println("File does not exist in that commit.");
         }
+        File file = join(Repository.CWD, fileName);
+        String blob = blobs.get(fileName);
+        File replaceFile = join(Blob.BLOB_FOLDER, blob);
+        byte[] content = readContents(replaceFile);
+        writeContents(file, content);
     }
 
     /**
@@ -37,15 +67,16 @@ public class Checkout {
             // If current id prefix is not
             if (count > 1) {
                 // ToDo: see if there are designated message.
-                System.out.println("Please enter the right commit ID.");
+                System.out.println("multiple commit with that prefix.");
                 System.exit(0);
             }
         }
-        if (count != 1) {
-            target="";
+        if (count == 1) {
+            return target;
         }
+        System.out.println("No commit with that id exists.");
         System.exit(0);
-        return target;
+        return "";
     }
 
     /**
@@ -75,8 +106,10 @@ public class Checkout {
      *  that are tracked in the current branch but are not present in the
      *  checked-out branch are deleted.
      */
-    public static void getCheckoutCommit(String[] args) {
-        checkoutCommit(args);
+    // Todo: Uncomment
+    public static void getCheckoutCommit() {
+        checkoutCommit();
+//        checkoutCommit(args);
     }
 
     /**
