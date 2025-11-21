@@ -31,9 +31,14 @@ public class Branch {
     /** Create a new branch file. */
     public static void newBranch(String branchName) {
         File branch = join(BRANCH_DIR, branchName);
+        if (branch.exists()) {
+            System.out.println("A branch with that name already exists.");
+            System.exit(0);
+        }
         try {
             branch.createNewFile();
             writeHead(branchName);
+            Branch.writeBranch(Commit.getHeadCommit().getPid());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
