@@ -55,6 +55,16 @@ public class Commit implements Serializable {
         this.fileNameToBLOB = new HashMap<>();
     }
 
+    /** Get commit by sha1. */
+    public static Commit getCommit(String pid) {
+        File commit = join(COMMIT_DIR, pid);
+        if (!commit.exists()) {
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
+        return readObject(commit, Commit.class);
+    }
+
     /** Commit a commit and set up EVERYTHING in one go. */
     public void makeCommit() {
         updateFile();
@@ -94,6 +104,8 @@ public class Commit implements Serializable {
     /** Get head commit. */
     public static Commit getHeadCommit() {
         String headSha1 = Branch.getHeadBranch();
+        // TodO: delete it
+        System.out.println("Head sha1: " + headSha1);
         File headCommit = join(COMMIT_DIR, headSha1);
         return readObject(headCommit, Commit.class);
     }
