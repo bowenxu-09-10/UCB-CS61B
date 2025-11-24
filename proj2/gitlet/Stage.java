@@ -33,11 +33,6 @@ public class Stage implements Serializable {
         return blob.saveBlob();
     }
 
-    /** Save file as blob file, and return its pid. */
-    public String saveAndGetFilePID(String fileName) {
-        return saveFile(fileName);
-    }
-
     /** Check if current file added is the same as commited.
      *  True for is the same as committed. */
     private boolean checkSameCommit(String fileName) {
@@ -55,6 +50,7 @@ public class Stage implements Serializable {
     public void addStage(String fileName) {
         // If file added is staged for removal, then remove it from remove staging area.
         stagedRemoval.remove(fileName);
+        String blobId = saveFile(fileName);
         // If added one is the same as commited, remove it from stagedAddition
         if (checkSameCommit(fileName)) {
             if (stagedAddition.containsValue(saveFile(fileName))) {
@@ -62,9 +58,7 @@ public class Stage implements Serializable {
                 return;
             }
         }
-        File file = join(Repository.CWD,fileName);
-        this.stagedAddition.put(fileName, sha1((Object) readContents(file)));
-        System.out.println(stagedAddition); // Todo: delete it
+        this.stagedAddition.put(fileName, blobId);
         saveStage(this);
     }
 
