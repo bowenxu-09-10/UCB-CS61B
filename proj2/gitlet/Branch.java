@@ -72,4 +72,18 @@ public class Branch {
             }
         }
     }
+
+    /** Remove branch. */
+    public static void removeBranch(String branchName) {
+        File branchrm = join(BRANCH_DIR, branchName);
+        if (!branchrm.exists()) {
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+        if (readHead().equals(branchName)) {
+            System.out.println("Cannot remove the current branch.");
+            System.exit(0);
+        }
+        branchrm.delete();
+    }
 }
