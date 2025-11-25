@@ -36,12 +36,7 @@ public class Checkout {
             System.exit(0);
         }
         Commit inBranch = Commit.getCommit(readContentsAsString(branch));
-        for (String fileName : plainFilenamesIn(Repository.CWD)) {
-            if (!inBranch.getFileNameToBLOB().containsKey(fileName)) {
-                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                System.exit(0);
-            }
-        }
+        checkTrack(inBranch);
         HashMap<String, String> blobs = inBranch.getFileNameToBLOB();
         // Import all the file in Branch.
         for (String fileName : blobs.keySet()) {
@@ -66,6 +61,17 @@ public class Checkout {
             }
         }
         writeContents(Branch.HEAD, branchName);
+    }
+
+    public static void checkTrack(Commit inBranch) {
+        for (String fileName : plainFilenamesIn(Repository.CWD)) {
+            File file = join(Repository.CWD, fileName);
+            if (!inBranch.getFileNameToBLOB().containsKey(fileName) &&
+                !sha1(readContents(file)).equals(inBranch.getFileNameToBLOB().get(fileName))) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
     }
 
     private static void checkoutCommit(String[] args) {
