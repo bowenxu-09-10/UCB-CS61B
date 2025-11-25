@@ -104,8 +104,6 @@ public class Commit implements Serializable {
     /** Get head commit. */
     public static Commit getHeadCommit() {
         String headSha1 = Branch.getHeadBranch();
-        // TodO: delete it
-        System.out.println("Head sha1: " + headSha1);
         File headCommit = join(COMMIT_DIR, headSha1);
         return readObject(headCommit, Commit.class);
     }
@@ -149,5 +147,35 @@ public class Commit implements Serializable {
     /** Set commit id. */
     public void setPid() {
         this.pid = sha1(this.parent + this.secondParent + this.message + this.timeStamp);
+    }
+
+    /** Remove all the tracked files but not tracked in commit. */
+    public static void removeFile(Commit commit) {
+        HashMap<String, String> blobs = commit.getFileNameToBLOB();
+        for (String fileName : plainFilenamesIn(Repository.CWD)) {
+            File fileInCWD = join(Repository.CWD, fileName);
+            if (!blobs.keySet().contains(fileInCWD)) {
+                fileInCWD.delete();
+            }
+        }
+    }
+
+    /** Import all the file in commit. */
+    public static void importFile(Commit commit) {
+        HashMap<String, String> blobs = commit.getFileNameToBLOB();
+        for (String fileName : blobs.keySet()) {
+            File fileInCWD = join(Repository.CWD, fileName);
+            File fileInBlob = join(Blob.BLOB_FOLDER, blobs.get(fileName));
+            if (fileInCWD.exists()) {
+                writeContents(fileInCWD, readContents(fileInBlob));
+            } else {
+                try {
+                    fileInCWD.createNewFile();
+                    writeContents(fileInCWD, readContents(fileInBlob));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }
