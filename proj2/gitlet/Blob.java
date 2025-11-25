@@ -10,31 +10,24 @@ public class Blob {
     public static final File BLOB_FOLDER = join(Repository.GITLET_DIR, "blob");
 
     /** Saved contents. */
-    private final byte[] contents;
+    private final String contents;
+
+    /** File name. */
+    private final String name;
 
     /** Constructor. */
     Blob(String fileName) {
         File file = join(Repository.CWD, fileName);
-        byte[] content = readContents(file);
+        String content = readContentsAsString(file);
         this.contents = content;
-    }
-
-    /** Return contents in specific Blob. */
-    public byte[] getContents(String blobName) {
-        File requiredBlob = join(BLOB_FOLDER, blobName);
-        try {
-            requiredBlob.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return readContents(requiredBlob);
+        this.name = fileName;
     }
 
     /** Save contents in a file named by sha-1, ana return its pid.*/
     public String saveBlob() {
-        File newBlob = join(BLOB_FOLDER, sha1(contents));
+        File newBlob = join(BLOB_FOLDER, sha1(contents + name));
         if (newBlob.exists()) {
-            return sha1(contents);
+            return sha1(contents + name);
         } else {
             try {
                 newBlob.createNewFile();
