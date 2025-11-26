@@ -178,4 +178,19 @@ public class Commit implements Serializable {
             }
         }
     }
+
+    /** Find the split commit of current head and branch given. */
+    public static Commit findSplitCommit(String branchName) {
+        File branch = join(Branch.BRANCH_DIR, branchName);
+        Commit inBranch = getCommit(readContentsAsString(branch));
+        Commit curr = getHeadCommit();
+        while (inBranch.parent != null && curr.parent != null) {
+            if (inBranch.parent.equals(curr.parent)) {
+                return getCommit(inBranch.parent);
+            }
+            inBranch = getCommit(inBranch.parent);
+            curr = getCommit(curr.parent);
+        }
+        return null;
+    }
 }
