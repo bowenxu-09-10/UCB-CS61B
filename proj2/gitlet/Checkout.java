@@ -36,7 +36,7 @@ public class Checkout {
             System.exit(0);
         }
         Commit inBranch = Commit.getCommit(readContentsAsString(branch));
-        checkTrack(inBranch);
+        checkTrack(Commit.getHeadCommit());
         Commit.importFile(inBranch);
         Commit.removeFile(inBranch);
         writeContents(Branch.HEAD, branchName);
@@ -46,7 +46,7 @@ public class Checkout {
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
             File file = join(Repository.CWD, fileName);
             if (!inBranch.getFileNameToBLOB().containsKey(fileName) &&
-                !sha1(readContents(file)).equals(inBranch.getFileNameToBLOB().get(fileName))) {
+                !sha1(readContents(file) + fileName).equals(inBranch.getFileNameToBLOB().get(fileName))) {
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
@@ -82,11 +82,11 @@ public class Checkout {
         for (String commit : plainFilenamesIn(Commit.COMMIT_DIR)) {
             if (commit.equals(prefix)) {
                 return commit;
-            } else if (commit.contains(prefix)){
+            } else if (commit.startsWith(prefix)){
                 target = commit;
                 count++;
             }
-            // If current id prefix is not
+            // If current id prefix is not the only one
             if (count > 1) {
                 System.out.println("multiple commit with that prefix.");
                 System.exit(0);
