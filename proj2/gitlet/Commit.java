@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import static gitlet.Utils.*;
@@ -180,17 +181,35 @@ public class Commit implements Serializable {
     }
 
     /** Find the split commit of current head and branch given. */
-    public static Commit findSplitCommit(String branchName) {
+    public static String findSplitCommit(String branchName) {
         File branch = join(Branch.BRANCH_DIR, branchName);
         Commit inBranch = getCommit(readContentsAsString(branch));
         Commit curr = getHeadCommit();
-        while (inBranch.parent != null && curr.parent != null) {
-            if (inBranch.parent.equals(curr.parent)) {
-                return getCommit(inBranch.parent);
-            }
-            inBranch = getCommit(inBranch.parent);
+        Set<String> idInCurr = new HashSet<>();
+        idInCurr.add(curr.pid);
+        // Log all the commit id of current head.
+        while (curr.parent != null) {
+            idInCurr.add(curr.parent);
             curr = getCommit(curr.parent);
         }
+        // Register the first id that in the set.
+        if (idInCurr.contains(inBranch.pid)) {
+            return inBranch.pid;
+        }
+        while (inBranch.parent != null) {
+            if (idInCurr.contains(inBranch.parent)) {
+                return inBranch.parent;
+            }
+            inBranch = getCommit(inBranch.parent);
+        }
         return null;
+    }
+
+    /** Determine whether the given branch is the ancestor of current. */
+    public static void ancestorCheck(String branchName) {
+        File branch  = join(Branch.BRANCH_DIR, branchName);
+        String branchID = readContentsAsString(branch);
+        Commit inBranch = getCommit(branchID);
+        // Todo: if inBranch is the split point.
     }
 }
