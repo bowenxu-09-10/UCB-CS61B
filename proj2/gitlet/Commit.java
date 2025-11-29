@@ -19,25 +19,39 @@ import static gitlet.Utils.*;
  *  @author Bowen
  */
 public class Commit implements Serializable {
-    /** The commit directory in .gitlet. */
+    /**
+     * The commit directory in .gitlet.
+     */
     public static final File COMMIT_DIR = join(Repository.GITLET_DIR, "commits");
 
-    /** The message of this Commit. */
+    /**
+     * The message of this Commit.
+     */
     private String message;
 
-    /** The timestamp if this Commit. */
+    /**
+     * The timestamp if this Commit.
+     */
     private Date timeStamp;
 
-    /** The parent commit of current commit. */
+    /**
+     * The parent commit of current commit.
+     */
     private String parent;
 
-    /** The second parent of current commit. (It'll happen in merge.) */
+    /**
+     * The second parent of current commit. (It'll happen in merge.)
+     */
     private String secondParent;
 
-    /** The pid of this commit. */
+    /**
+     * The pid of this commit.
+     */
     private String pid;
 
-    /** The file current commit tracked. */
+    /**
+     * The file current commit tracked.
+     */
     private HashMap<String, String> fileNameToBLOB;
 
     Commit(String message, String parent, String secondParent) {
@@ -47,7 +61,9 @@ public class Commit implements Serializable {
         this.fileNameToBLOB = new HashMap<>(getParent().getFileNameToBLOB());
     }
 
-    /** Initial commit. */
+    /**
+     * Initial commit.
+     */
     Commit() {
         this.message = "initial commit";
         this.timeStamp = new Date(0);
@@ -56,7 +72,9 @@ public class Commit implements Serializable {
         this.fileNameToBLOB = new HashMap<>();
     }
 
-    /** Get commit by sha1. */
+    /**
+     * Get commit by sha1.
+     */
     public static Commit getCommit(String pid) {
         File commit = join(COMMIT_DIR, pid);
         if (!commit.exists()) {
@@ -66,12 +84,16 @@ public class Commit implements Serializable {
         return readObject(commit, Commit.class);
     }
 
-    /** Commit a commit and set up EVERYTHING in one go. */
+    /**
+     * Commit a commit and set up EVERYTHING in one go.
+     */
     public void makeCommit() {
         updateFile();
     }
 
-    /** Get parent commit. */
+    /**
+     * Get parent commit.
+     */
     public Commit getParent() {
         if (this.parent == null) {
             return null;
@@ -80,8 +102,10 @@ public class Commit implements Serializable {
         return readObject(parentFile, Commit.class);
     }
 
-    /** Copy its parent tracking file and update it according to
-     *  the staging area. */
+    /**
+     * Copy its parent tracking file and update it according to
+     * the staging area.
+     */
     private void updateFile() {
 
         Stage stage = readObject(Stage.INDEX, Stage.class);
@@ -102,14 +126,18 @@ public class Commit implements Serializable {
 
     }
 
-    /** Get head commit. */
+    /**
+     * Get head commit.
+     */
     public static Commit getHeadCommit() {
         String headSha1 = Branch.getHeadBranch();
         File headCommit = join(COMMIT_DIR, headSha1);
         return readObject(headCommit, Commit.class);
     }
 
-    /** Save commit into a file to make persistence. */
+    /**
+     * Save commit into a file to make persistence.
+     */
     public void saveCommit() {
         if (timeStamp == null) {
             this.timeStamp = new Date();
@@ -125,32 +153,44 @@ public class Commit implements Serializable {
         Stage.clear();
     }
 
-    /** Get timestamp. */
+    /**
+     * Get timestamp.
+     */
     public Date getTimeStamp() {
         return timeStamp;
     }
 
-    /** Get message. */
+    /**
+     * Get message.
+     */
     public String getMessage() {
         return message;
     }
 
-    /** Get fileNameToBlob. */
+    /**
+     * Get fileNameToBlob.
+     */
     public HashMap<String, String> getFileNameToBLOB() {
         return fileNameToBLOB;
     }
 
-    /** Get commit id. */
+    /**
+     * Get commit id.
+     */
     public String getPid() {
         return pid;
     }
 
-    /** Set commit id. */
+    /**
+     * Set commit id.
+     */
     public void setPid() {
         this.pid = sha1(this.parent + this.secondParent + this.message + this.timeStamp);
     }
 
-    /** Remove all the tracked files but not tracked in commit. */
+    /**
+     * Remove all the tracked files but not tracked in commit.
+     */
     public static void removeFile(Commit commit) {
         HashMap<String, String> blobs = commit.getFileNameToBLOB();
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
@@ -161,7 +201,9 @@ public class Commit implements Serializable {
         }
     }
 
-    /** Import all the file in commit. */
+    /**
+     * Import all the file in commit.
+     */
     public static void importFile(Commit commit) {
         HashMap<String, String> blobs = commit.getFileNameToBLOB();
         for (String fileName : blobs.keySet()) {
@@ -180,7 +222,9 @@ public class Commit implements Serializable {
         }
     }
 
-    /** Find the split commit of current head and branch given. */
+    /**
+     * Find the split commit of current head and branch given.
+     */
     public static String findSplitCommit(String branchName) {
         File branch = join(Branch.BRANCH_DIR, branchName);
         Commit inBranch = getCommit(readContentsAsString(branch));
@@ -205,11 +249,13 @@ public class Commit implements Serializable {
         return null;
     }
 
-    /** Determine whether the given branch is the ancestor of current.
-     *  Return true if the given branch is ancestor or the opposite.
-     *  Return false if neither is ancestor. */
+    /**
+     * Determine whether the given branch is the ancestor of current.
+     * Return true if the given branch is ancestor or the opposite.
+     * Return false if neither is ancestor.
+     */
     public static boolean ancestorCheck(String branchName) {
-        File branch  = join(Branch.BRANCH_DIR, branchName);
+        File branch = join(Branch.BRANCH_DIR, branchName);
         String branchID = readContentsAsString(branch);
         Commit inBranch = getCommit(branchID);
         Commit head = getHeadCommit();
@@ -229,4 +275,46 @@ public class Commit implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Rule1: If the given branch modified one file, but you didn't, stage it.
+     * Rule2: If the given branch didn't modify, but head did, nothing change.
+     * Rule3: If both modified the same file and do the same modify, no clash.
+     */
+    public static void mergeRuleOne(String branchName) {
+        File branchFile = join(Branch.BRANCH_DIR, branchName);
+        String branchID = readContentsAsString(branchFile);
+        String splitID = findSplitCommit(branchName);
+
+        Commit branch = getCommit(branchID);
+        Commit split = getCommit(splitID);
+        Commit head = getHeadCommit();
+
+        Stage stage = Stage.load();
+
+
+        Stage.saveStage(stage);
+    }
+
+    /** Rule1: If the given branch modified one file, but you didn't, stage it. */
+    private static void applyRule1(Commit head, Commit split, Commit given, Stage stage) {
+        for (String fileName : split.fileNameToBLOB.keySet()) {
+
+            boolean headSameAsSplit =
+                    head.fileNameToBLOB.containsKey(fileName) &&
+                            head.fileNameToBLOB.get(fileName).equals(split.fileNameToBLOB.get(fileName));
+
+            boolean givenDiffFromSplit =
+                    given.fileNameToBLOB.containsKey(fileName) &&
+                            !given.fileNameToBLOB.get(fileName).equals(split.fileNameToBLOB.get(fileName));
+
+            if (headSameAsSplit && givenDiffFromSplit) {
+                // take given version
+                Checkout.checkoutAndStage(fileName, given, stage);
+            }
+        }
+    }
+
 }
+
+

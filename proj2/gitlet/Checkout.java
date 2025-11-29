@@ -105,6 +105,17 @@ public class Checkout {
         return "";
     }
 
+    /** Checkout fileName from the given commit, write into CWD, and stage it. */
+    public static void checkoutAndStage(String fileName, Commit fromCommit, Stage stage) {
+        String blobID = fromCommit.getFileNameToBLOB().get(fileName);
+        File blobFile = join(Blob.BLOB_FOLDER, blobID);
+        byte[] content = readContents(blobFile);
+
+        File outFile = join(Repository.CWD, fileName);
+        writeContents(outFile, content);
+
+        stage.addStage(fileName);
+    }
     /**
      *  Takes the version of the file as it exists in the head commit and puts
      *  it in the working directory, overwriting the version of the file that’s
