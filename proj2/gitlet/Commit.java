@@ -1,14 +1,9 @@
 package gitlet;
 
-// TODO: any imports you need here
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -19,39 +14,25 @@ import static gitlet.Utils.*;
  *  @author Bowen
  */
 public class Commit implements Serializable {
-    /**
-     * The commit directory in .gitlet.
-     */
+    /** The commit directory in .gitlet. */
     public static final File COMMIT_DIR = join(Repository.GITLET_DIR, "commits");
 
-    /**
-     * The message of this Commit.
-     */
+    /** The message of this Commit. */
     private String message;
 
-    /**
-     * The timestamp if this Commit.
-     */
+    /** The timestamp if this Commit. */
     private Date timeStamp;
 
-    /**
-     * The parent commit of current commit.
-     */
+    /** The parent commit of current commit. */
     private String parent;
 
-    /**
-     * The second parent of current commit. (It'll happen in merge.)
-     */
+    /** The second parent of current commit. (It'll happen in merge.) */
     private String secondParent;
 
-    /**
-     * The pid of this commit.
-     */
+    /** The pid of this commit. */
     private String pid;
 
-    /**
-     * The file current commit tracked.
-     */
+    /** The file current commit tracked. */
     public HashMap<String, String> fileNameToBLOB;
 
     Commit(String message, String parent, String secondParent) {
@@ -61,9 +42,7 @@ public class Commit implements Serializable {
         this.fileNameToBLOB = new HashMap<>(getParent().fileNameToBLOB);
     }
 
-    /**
-     * Initial commit.
-     */
+    /** Initial commit. */
     Commit() {
         this.message = "initial commit";
         this.timeStamp = new Date(0);
@@ -72,9 +51,7 @@ public class Commit implements Serializable {
         this.fileNameToBLOB = new HashMap<>();
     }
 
-    /**
-     * Get commit by sha1.
-     */
+    /** Get commit by sha1. */
     public static Commit getCommit(String pid) {
         File commit = join(COMMIT_DIR, pid);
         if (!commit.exists()) {
@@ -84,16 +61,12 @@ public class Commit implements Serializable {
         return readObject(commit, Commit.class);
     }
 
-    /**
-     * Commit a commit and set up EVERYTHING in one go.
-     */
+    /** Commit a commit and set up EVERYTHING in one go. */
     public void makeCommit() {
         updateFile();
     }
 
-    /**
-     * Get parent commit.
-     */
+    /** Get parent commit. */
     public Commit getParent() {
         if (this.parent == null) {
             return null;
@@ -102,9 +75,8 @@ public class Commit implements Serializable {
         return readObject(parentFile, Commit.class);
     }
 
-    /**
-     * Copy its parent tracking file and update it according to
-     * the staging area.
+    /** Copy its parent tracking file and update it according to
+     *  the staging area.
      */
     private void updateFile() {
 
@@ -126,18 +98,14 @@ public class Commit implements Serializable {
 
     }
 
-    /**
-     * Get head commit.
-     */
+    /** Get head commit. */
     public static Commit getHeadCommit() {
         String headSha1 = Branch.getHeadBranch();
         File headCommit = join(COMMIT_DIR, headSha1);
         return readObject(headCommit, Commit.class);
     }
 
-    /**
-     * Save commit into a file to make persistence.
-     */
+    /** Save commit into a file to make persistence. */
     public void saveCommit() {
         if (timeStamp == null) {
             this.timeStamp = new Date();
@@ -153,37 +121,27 @@ public class Commit implements Serializable {
         Stage.clear();
     }
 
-    /**
-     * Get timestamp.
-     */
+    /** Get timestamp. */
     public Date getTimeStamp() {
         return timeStamp;
     }
 
-    /**
-     * Get message.
-     */
+    /** Get message. */
     public String getMessage() {
         return message;
     }
 
-    /**
-     * Get commit id.
-     */
+    /** Get commit id. */
     public String getPid() {
         return pid;
     }
 
-    /**
-     * Set commit id.
-     */
+    /** Set commit id. */
     public void setPid() {
         this.pid = sha1(this.parent + this.secondParent + this.message + this.timeStamp);
     }
 
-    /**
-     * Remove all the tracked files but not tracked in commit.
-     */
+    /** Remove all the tracked files but not tracked in commit. */
     public static void removeFile(Commit commit) {
         HashMap<String, String> blobs = commit.fileNameToBLOB;
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
@@ -194,9 +152,7 @@ public class Commit implements Serializable {
         }
     }
 
-    /**
-     * Import all the file in commit.
-     */
+    /** Import all the file in commit. */
     public static void importFile(Commit commit) {
         HashMap<String, String> blobs = commit.fileNameToBLOB;
         for (String fileName : blobs.keySet()) {
@@ -215,9 +171,7 @@ public class Commit implements Serializable {
         }
     }
 
-    /**
-     * Find the split commit of current head and branch given.
-     */
+    /** Find the split commit of current head and branch given. */
     public static String findSplitCommit(String branchName) {
         File branch = join(Branch.BRANCH_DIR, branchName);
         Commit inBranch = getCommit(readContentsAsString(branch));
@@ -274,7 +228,7 @@ public class Commit implements Serializable {
      * Rule2: If the given branch didn't modify, but head did, nothing change.
      * Rule3: If both modified the same file and do the same modify, no clash.
      */
-    public static void mergeRuleOne(String branchName) {
+    public static void mergeRule(String branchName) {
         File branchFile = join(Branch.BRANCH_DIR, branchName);
         String branchID = readContentsAsString(branchFile);
         String splitID = findSplitCommit(branchName);
@@ -286,7 +240,8 @@ public class Commit implements Serializable {
         Stage stage = Stage.load();
         applyRule1(head, split, branch, stage);
         applyRule4(head, split, branch, stage);
-
+        applyRule6(head, split, branch, stage);
+        applyRule8(head, split, branch, stage);
         Stage.saveStage(stage);
     }
 
@@ -331,7 +286,60 @@ public class Commit implements Serializable {
             boolean inSpilt = split.fileNameToBLOB.containsKey(fileName);
 
             if (notInBranch && inSpilt) {
-                join(Repository.CWD, fileName).delete();
+                stage.removeStage(fileName);
+            }
+        }
+    }
+
+    /** Rule8: Any files modified in different ways in the current and
+     * given branches are in conflict.
+     */
+    private static void applyRule8(Commit head, Commit split, Commit given, Stage stage) {
+        Set<String> allFiles = new TreeSet<>();
+        allFiles.addAll(head.fileNameToBLOB.keySet());
+        allFiles.addAll(given.fileNameToBLOB.keySet());
+        allFiles.addAll(split.fileNameToBLOB.keySet());
+        for (String fileName : allFiles) {
+            boolean inSplit = split.fileNameToBLOB.containsKey(fileName);
+            boolean inHead = head.fileNameToBLOB.containsKey(fileName);
+            boolean inGiven = given.fileNameToBLOB.containsKey(fileName);
+
+            String splitBlob = inSplit ? split.fileNameToBLOB.get(fileName) : null;
+            String headBlob = inHead ? head.fileNameToBLOB.get(fileName) : null;
+            String givenBlob = inGiven ? given.fileNameToBLOB.get(fileName) : null;
+
+            String splitContent = inSplit ? readContentsAsString(join(Blob.BLOB_FOLDER, splitBlob)) : null;
+            String headContent = inHead ? Utils.readContentsAsString(join(Blob.BLOB_FOLDER, headBlob)) : null;
+            String givenContent = inGiven ? Utils.readContentsAsString(join(Blob.BLOB_FOLDER, givenBlob)) : null;
+
+            // If both head and branch have file with same name but different content, collision.
+            if (inHead && inGiven) {
+                if (!headContent.equals(givenContent)) {
+                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + givenContent + "\n>>>>>>>";
+                    Utils.writeContents(join(Repository.CWD, fileName), merged);
+                    stage.addStage(fileName);
+                    continue;
+                }
+            }
+
+            // If head modified the file, but branch deleted, collision.
+            if (inSplit && inHead && !inGiven) {
+                if (!headContent.equals(splitContent)) {
+                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n\n>>>>>>>";
+                    Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
+                    stage.addStage(fileName);
+                    continue;
+                }
+            }
+
+            // If head deleted the file, but branch modified, collision.
+            if (inSplit && !inHead && inGiven) {
+                if (!givenContent.equals(splitContent)) {
+                    String merged = "<<<<<<< HEAD\n\n=======\n" + givenContent + "\n>>>>>>>";
+                    Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
+                    stage.addStage(fileName);
+                    continue;
+                }
             }
         }
     }
