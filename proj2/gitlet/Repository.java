@@ -42,7 +42,8 @@ public class Repository {
      *  initial commit.
      *  Timestamp will be 00:00:00 UTC, Thursday, 1 January 1970.
      */
-    public static void initCommend() {
+    public static void initCommend(String[] args) {
+        operandsCheck(args, 1);
         if (GITLET_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
@@ -52,50 +53,49 @@ public class Repository {
         Stage.saveStage(initStage);
         Commit initialCommit = new Commit();
         initialCommit.saveCommit();
-        Branch.newBranch("Master");
-        Branch.writeBranch(sha1((Object) serialize(initialCommit)));
+        Branch.writeHead("Master");
+        Branch.writeBranch(initialCommit.getPid());
     }
 
     /** Saves a snapshot of tracked files in the current commit and
      *  staging area so they can be restored at a later time, creating
      *  a new commit.
      */
-    public static void makeCommit(String test) {
-        // No log message
-//        if (args.length == 1) {
-//            System.out.println("Please enter a commit message.");
-//            System.exit(0);
-//        }
+    public static void commitCommend(String[] args) {
+        operandsCheck(args, 2);
+        checkFolderGitleted();
         Stage stage = Stage.load();
         if (stage.getStagedAddition().isEmpty() && stage.getStagedRemoval().isEmpty()) {
             System.out.println("No changes added to the commit.");
             return;
         }
         String headID = Branch.getHeadBranch();
-        Commit newCommit = new Commit(test, headID, null);
+        Commit newCommit = new Commit(args[1], headID, null);
         newCommit.makeCommit();
         newCommit.saveCommit();
-        Branch.writeBranch(newCommit.getCommitID());
+        Branch.writeBranch(newCommit.getPid());
     }
 
     /** Add new created files or edited files to staging area. */
-    public static void addCommend(String fileName) {
+    public static void addCommend(String[] args) {
         checkFolderGitleted();
-        File file = join(CWD, fileName);
+        operandsCheck(args, 2);
+        File file = join(CWD, args[1]);
         if (!file.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
         Stage stage = Stage.load();
-        stage.addStage(fileName);
+        stage.addStage(args[1]);
     }
 
     /** Remove files. */
-    public static void rmCommend(String fileName) {
+    public static void rmCommend(String[] args) {
         checkFolderGitleted();
-        File file = join(CWD, fileName);
+        operandsCheck(args, 2);
+        File file = join(CWD, args[1]);
         Stage stage = Stage.load();
-        stage.removeStage(fileName);
+        stage.removeStage(args[1]);
     }
 
     /** Check whether current folder is gitleted folder. */
@@ -107,34 +107,37 @@ public class Repository {
     }
 
     /** Log all the message in current branch. */
-    public static void logCommend() {
+    public static void logCommend(String[] args) {
         checkFolderGitleted();
+        operandsCheck(args, 1);
         Commit head = Commit.getHeadCommit();
         Commit curr = head;
-        System.out.println("===");
-        System.out.println("commit " + curr.getCommitID());
-        System.out.println("Date: " + curr.getTimeStamp());
-        System.out.println(curr.getMessage());
-        System.out.println();
-        // Todo: If have two parent commit, add one line. merged ...
-        while (curr.getParent() != null) {
-            curr = curr.getParent();
+        while (curr != null) {
             System.out.println("===");
-            System.out.println("commit " + curr.getCommitID());
+            System.out.println("commit " + curr.getPid());
+            if (curr.getSecondParent() != null) {
+                String merge = "Merge: " + curr.getParentID().substring(7) + " " +
+                        curr.getSecondParent().substring(7);
+                System.out.println(merge);
+            }
             System.out.println("Date: " + curr.getTimeStamp());
             System.out.println(curr.getMessage());
-            System.out.println();
+            if (curr.getSecondParent() == null) {
+                System.out.println();
+            }
+            curr = curr.getParent();
         }
     }
 
     /** Log all the message. */
-    public static void globalLogCommend() {
+    public static void globalLogCommend(String[] args) {
+        operandsCheck(args, 1);
         checkFolderGitleted();
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);
             System.out.println("===");
-            System.out.println("commit " + curr.getCommitID());
+            System.out.println("commit " + curr.getPid());
             System.out.println("Date: " + curr.getTimeStamp());
             System.out.println(curr.getMessage());
             System.out.println();
@@ -142,21 +145,133 @@ public class Repository {
     }
 
     /** Find commit with given message. */
-    public static void findCommend(String message) {
+    public static void findCommend(String[] args) {
+        operandsCheck(args, 2);
         checkFolderGitleted();
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);
-            if (curr.getMessage().equals(message)) {
+            if (curr.getMessage().equals(args[1])) {
                 System.out.println(fileName);
             }
         }
     }
 
     /** Print status */
-    public static void printStatus() {
+    public static void printStatus(String[] args) {
+        operandsCheck(args, 1);
         checkFolderGitleted();
         Stage stage = Stage.load();
         stage.printStatus();
+    }
+
+    /** Check out files.
+     *  1. java gitlet.Main checkout -- [file name]:
+     *  Takes the version of the file as it exists in the head commit and puts
+     *  it in the working directory, overwriting the version of the file that’s
+     *  already there if there is one. The new version of the file is not staged.
+     *
+     *  2. java gitlet.Main checkout [commit id] -- [file name]
+     *  Takes the version of the file as it exists in the commit with the given
+     *  id, and puts it in the working directory, overwriting the version of the
+     *  file that’s already there if there is one. The new version of the file is
+     *  not staged.
+     *
+     *  3. java gitlet.Main checkout [branch name]
+     *  Takes all files in the commit at the head of the given branch, and puts
+     *  them in the working directory, overwriting the versions of the files that
+     *  are already there if they exist. Also, at the end of this command, the
+     *  given branch will now be considered the current branch (HEAD). Any files
+     *  that are tracked in the current branch but are not present in the
+     *  checked-out branch are deleted.
+     */
+    public static void checkoutCommend(String[] args) {
+        if (args.length == 3) {
+            Checkout.getCheckoutFile(args);
+        } else if (args.length == 2) {
+            Checkout.getCheckoutBranch(args[1]);
+        }else if (args.length == 2) {
+            Checkout.getCheckoutCommit(args);
+        } else {
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
+    }
+
+    /** Create a new Branch, but HEAD still point at current branch. */
+    public static void branchCommend(String[] args) {
+        Branch.newBranch(args[1]);
+    }
+
+    /** Remove branch. */
+    public static void removeBranch(String[] args) {
+        operandsCheck(args, 2);
+        Branch.removeBranch(args[1]);
+    }
+
+    /** Checks out all the files tracked by the given commit.
+     *  Removes tracked files that are not present in that commit.
+     *  Also moves the current branch’s head to that commit node. */
+    public static void resetCommend(String[] args) {
+        checkFolderGitleted();
+        operandsCheck(args, 2);
+        String id = Checkout.getCheckPrefix(args[1]);
+        Commit commit = Commit.getCommit(id);
+        Checkout.checkTrack(Commit.getHeadCommit());
+        Commit.importFile(commit);
+        Commit.removeFile(commit);
+        String branchName = Branch.readHead();
+        File branch = join(Branch.BRANCH_DIR, branchName);
+        writeContents(branch, id);
+        Stage.clear();
+    }
+
+    /** Merges files from the given branch into the current branch. */
+    public static void mergeCommend(String[] args) {
+        checkFolderGitleted();
+        operandsCheck(args, 2);
+        precheckMerge(args[1]);
+        Commit.ancestorCheck(args[1]);
+        String headID = Branch.getHeadBranch();
+        File branch = join(Branch.BRANCH_DIR, args[1]);
+        String branchID  = readContentsAsString(branch);
+        Commit newCommit = new Commit("Merged development into master.", headID, branchID);
+        Commit.mergeRule(args[1]);
+        newCommit.makeCommit();
+        newCommit.saveCommit();
+        Branch.writeBranch(newCommit.getPid());
+    }
+
+    /** Precheck before merge. */
+    private static void precheckMerge(String branchName) {
+        Stage stage = Stage.load();
+        // If there's file in stage area.
+        if (stage.getStagedAddition().isEmpty() && stage.getStagedRemoval().isEmpty()) {
+            System.out.println("You have uncommitted changes.");
+            System.exit(0);
+        }
+        // If the branch is not exist.
+        if (!join(Branch.BRANCH_DIR, branchName).exists()) {
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+        // If the branch wanting to merge is the current branch.
+        if (readContentsAsString(Branch.HEAD).equals(branchName)) {
+            System.out.println("Cannot merge a branch with itself.");
+            System.exit(0);
+        }
+        // If merge will overwrite a untracked file.
+        File branch = join(Branch.BRANCH_DIR, branchName);
+        Commit inBranch = Commit.getCommit(readContentsAsString(branch));
+        Checkout.checkTrack(inBranch);
+    }
+
+    /** Operands check.
+     * If only one or more than two operands, then issue. */
+    private static void operandsCheck(String args[], int num) {
+        if (args.length != num) {
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
     }
 }

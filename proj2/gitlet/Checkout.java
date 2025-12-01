@@ -158,6 +158,8 @@ public class Checkout {
         if (args.length == 4 && args[2].equals("--") && args[1].length() <= 40) {
             return true;
         }
+        System.out.println("Incorrect operands.");
+        System.exit(0);
         return false;
     }
 

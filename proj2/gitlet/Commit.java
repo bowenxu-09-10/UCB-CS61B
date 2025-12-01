@@ -8,9 +8,6 @@ import java.util.*;
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
  *  @author Bowen
  */
 public class Commit implements Serializable {
@@ -73,6 +70,16 @@ public class Commit implements Serializable {
         }
         File parentFile = join(COMMIT_DIR, this.parent);
         return readObject(parentFile, Commit.class);
+    }
+
+    /** Get secondParent id. */
+    public String getSecondParent() {
+        return secondParent;
+    }
+
+    /** Get parent id. */
+    public String getParentID() {
+        return parent;
     }
 
     /** Copy its parent tracking file and update it according to
@@ -338,11 +345,8 @@ public class Commit implements Serializable {
                     String merged = "<<<<<<< HEAD\n\n=======\n" + givenContent + "\n>>>>>>>";
                     Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
-                    continue;
                 }
             }
         }
     }
 }
-
-

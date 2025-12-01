@@ -9,36 +9,54 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-//        if (args.length == 0) {
-//            System.out.println("Please enter a command.");
-//            System.exit(0);
-//        }
-        String firstArg = "commit";
+        if (args.length == 0) {
+            System.out.println("Please enter a command.");
+            System.exit(0);
+        }
+        String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                Repository.initCommend();
+                Repository.initCommend(args);
                 break;
             case "add":
-                Repository.addCommend("test2");
+                Repository.addCommend(args);
                 break;
             case "commit":
-                Repository.makeCommit("add test1 remove test1");
+                Repository.commitCommend(args);
                 break;
             case "rm":
-                Repository.rmCommend("test1");
+                Repository.rmCommend(args);
                 break;
             case "log":
-                Repository.logCommend();
+                Repository.logCommend(args);
                 break;
             case "global-log":
-                Repository.globalLogCommend();
+                Repository.globalLogCommend(args);
                 break;
             case "find":
-                Repository.findCommend("initial commit");
+                Repository.findCommend(args);
                 break;
             case "status":
-                Repository.printStatus();
+                Repository.printStatus(args);
                 break;
+            case "checkout":
+                Repository.checkoutCommend(args);
+                break;
+            case "branch":
+                Repository.branchCommend(args);
+                break;
+            case "rm-branch":
+                Repository.removeBranch(args);
+                break;
+            case "reset":
+                Repository.resetCommend(args);
+                break;
+            case "merge":
+                Repository.mergeCommend(args);
+                break;
+            default:
+                System.out.println("No command with that name exists.");
+                System.exit(0);
         }
     }
 }
