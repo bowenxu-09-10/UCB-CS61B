@@ -53,7 +53,7 @@ public class Repository {
         Stage.saveStage(initStage);
         Commit initialCommit = new Commit();
         initialCommit.saveCommit();
-        Branch.writeHead("Master");
+        Branch.writeHead("master");
         Branch.writeBranch(initialCommit.getPid());
     }
 
