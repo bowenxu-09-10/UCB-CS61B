@@ -190,7 +190,7 @@ public class Repository {
             Checkout.getCheckoutFile(args);
         } else if (args.length == 2) {
             Checkout.getCheckoutBranch(args[1]);
-        }else if (args.length == 2) {
+        }else if (args.length == 4) {
             Checkout.getCheckoutCommit(args);
         } else {
             System.out.println("Incorrect operands.");
