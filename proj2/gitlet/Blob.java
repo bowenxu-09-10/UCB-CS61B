@@ -33,11 +33,9 @@ public class Blob {
     }
 
     /** Save contents in a file named by sha-1, ana return its pid.*/
-    public String saveBlob() {
-        String id = sha1(contents + name);
+    public void saveBlob() {
         File newBlob = join(BLOB_FOLDER, id);
         if (newBlob.exists()) {
-            return id;
         } else {
             try {
                 newBlob.createNewFile();
@@ -46,6 +44,5 @@ public class Blob {
             }
             writeContents(newBlob, contents);
         }
-        return id;
     }
 }
