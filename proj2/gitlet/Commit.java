@@ -144,12 +144,12 @@ public class Commit implements Serializable {
         this.pid = sha1(this.parent + this.secondParent + this.message + this.timeStamp);
     }
 
-    /** Remove all the tracked files but not tracked in commit. */
+    /** Remove all the tracked files but not tracked in given commit. */
     public static void removeFile(Commit commit) {
         HashMap<String, String> blobs = commit.fileNameToBLOB;
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
             File fileInCWD = join(Repository.CWD, fileName);
-            if (!blobs.keySet().contains(fileInCWD)) {
+            if (!blobs.keySet().contains(fileName)) {
                 fileInCWD.delete();
             }
         }
