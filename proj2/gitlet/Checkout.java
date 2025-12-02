@@ -64,8 +64,7 @@ public class Checkout {
         if (!(checkCommendFormat(args) || commitID.equals(""))) {
             System.exit(0);
         }
-        File commitFile = Utils.join(Commit.COMMIT_DIR, commitID);
-        Commit commit = readObject(commitFile, Commit.class);
+        Commit commit = Commit.getCommit(commitID);
         String fileName = args[3];
         HashMap<String, String> blobs = commit.fileNameToBLOB;
         if (!blobs.containsKey(fileName)) {

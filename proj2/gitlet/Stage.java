@@ -51,6 +51,7 @@ public class Stage implements Serializable {
         // If file added is staged for removal, then remove it from remove staging area.
         stagedRemoval.remove(fileName);
         Blob blob = new Blob(fileName);
+        blob.saveBlob();
         String blobId = blob.getId();
         // If added one is the same as commited, remove it from stagedAddition
         if (checkSameFile(fileName)) {
