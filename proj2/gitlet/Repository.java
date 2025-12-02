@@ -195,6 +195,7 @@ public class Repository {
      *  checked-out branch are deleted.
      */
     public static void checkoutCommend(String[] args) {
+        checkFolderGitleted();
         if (args.length == 3) {
             Checkout.getCheckoutFile(args);
         } else if (args.length == 2) {
