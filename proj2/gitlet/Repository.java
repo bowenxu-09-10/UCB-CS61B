@@ -152,15 +152,18 @@ public class Repository {
     public static void findCommend(String[] args) {
         operandsCheck(args, 2);
         checkFolderGitleted();
+        boolean find = false;
         for (String fileName : plainFilenamesIn(Commit.COMMIT_DIR)) {
             File file = join(Commit.COMMIT_DIR, fileName);
             Commit curr = readObject(file, Commit.class);
             if (curr.getMessage().equals(args[1])) {
                 System.out.println(fileName);
-                return;
+                find = true;
             }
         }
-        System.out.println("Found no commit with that message.");
+        if (!find) {
+            System.out.println("Found no commit with that message.");
+        }
     }
 
     /** Print status */
