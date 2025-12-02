@@ -157,8 +157,10 @@ public class Repository {
             Commit curr = readObject(file, Commit.class);
             if (curr.getMessage().equals(args[1])) {
                 System.out.println(fileName);
+                return;
             }
         }
+        System.out.println("Found no commit with that message.");
     }
 
     /** Print status */
