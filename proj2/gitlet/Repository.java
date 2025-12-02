@@ -255,7 +255,7 @@ public class Repository {
     private static void precheckMerge(String branchName) {
         Stage stage = Stage.load();
         // If there's file in stage area.
-        if (stage.getStagedAddition().isEmpty() && stage.getStagedRemoval().isEmpty()) {
+        if (!stage.getStagedAddition().isEmpty() || !stage.getStagedRemoval().isEmpty()) {
             System.out.println("You have uncommitted changes.");
             System.exit(0);
         }
