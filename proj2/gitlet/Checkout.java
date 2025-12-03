@@ -46,12 +46,14 @@ public class Checkout {
 
     /** Check is there any other file in CWD that is not tracked in head and would be
      * overwritten by given branch. */
-    public static void checkTrack(Commit inBranch) {
+    public static void checkTrack(Commit given) {
         Commit head = Commit.getHeadCommit();
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
             File file = join(Repository.CWD, fileName);
-            if (!head.fileNameToBLOB.containsKey(fileName)
-                    && !sha1(readContents(file) + fileName).equals(inBranch.fileNameToBLOB.get(fileName))) {
+            boolean trackedInHead = head.fileNameToBLOB.containsKey(fileName);
+            boolean trackedGiven = given.fileNameToBLOB.containsKey(fileName);
+            boolean sameAsGiven = sha1(readContents(file) + fileName).equals(given.fileNameToBLOB.get(fileName));
+            if (!trackedInHead && trackedGiven && !sameAsGiven) {
                 System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
