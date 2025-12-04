@@ -13,11 +13,11 @@ public class Checkout {
         }
         Commit head = Commit.getHeadCommit();
         String fileName = args[2];
-        if (!head.fileNameToBLOB.containsKey(fileName)) {
+        if (!head.getFileNameToBLOB().containsKey(fileName)) {
             System.out.println("File does not exist in that commit.");
             System.exit(0);
         }
-        HashMap<String, String> blobs = head.fileNameToBLOB;
+        HashMap<String, String> blobs = head.getFileNameToBLOB();
         File file = join(Repository.CWD, fileName);
         String blob = blobs.get(fileName);
         File replaceFile = join(Blob.BLOB_FOLDER, blob);
@@ -49,10 +49,10 @@ public class Checkout {
         Commit head = Commit.getHeadCommit();
         for (String fileName : plainFilenamesIn(Repository.CWD)) {
             File file = join(Repository.CWD, fileName);
-            boolean trackedInHead = head.fileNameToBLOB.containsKey(fileName);
-            boolean trackedGiven = given.fileNameToBLOB.containsKey(fileName);
+            boolean trackedInHead = head.getFileNameToBLOB().containsKey(fileName);
+            boolean trackedGiven = given.getFileNameToBLOB().containsKey(fileName);
             boolean sameAsGiven = sha1(readContents(file) + fileName)
-                    .equals(given.fileNameToBLOB.get(fileName));
+                    .equals(given.getFileNameToBLOB().get(fileName));
             if (!trackedInHead && trackedGiven && !sameAsGiven) {
                 System.out.println("There is an untracked file in the way;"
                         + "delete it, or add and commit it first.");
@@ -70,7 +70,7 @@ public class Checkout {
         }
         Commit commit = Commit.getCommit(commitID);
         String fileName = args[3];
-        HashMap<String, String> blobs = commit.fileNameToBLOB;
+        HashMap<String, String> blobs = commit.getFileNameToBLOB();
         if (!blobs.containsKey(fileName)) {
             System.out.println("File does not exist in that commit.");
             System.exit(0);
@@ -111,7 +111,7 @@ public class Checkout {
 
     /** Checkout fileName from the given commit, write into CWD, and stage it. */
     public static void checkoutAndStage(String fileName, Commit fromCommit, Stage stage) {
-        String blobID = fromCommit.fileNameToBLOB.get(fileName);
+        String blobID = fromCommit.getFileNameToBLOB().get(fileName);
         File blobFile = join(Blob.BLOB_FOLDER, blobID);
         byte[] content = readContents(blobFile);
 

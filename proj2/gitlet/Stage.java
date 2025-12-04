@@ -37,10 +37,10 @@ public class Stage implements Serializable {
      *  True for is the same as committed. */
     private boolean checkSameFile(String fileName) {
         Commit head = Commit.getHeadCommit();
-        if (head.fileNameToBLOB == null) {
+        if (head.getFileNameToBLOB() == null) {
             return false;
         }
-        HashMap<String, String> fileTracked = head.fileNameToBLOB;
+        HashMap<String, String> fileTracked = head.getFileNameToBLOB();
         Blob blob = new Blob(fileName);
         return fileTracked.containsValue(blob.getId());
     }
@@ -74,7 +74,7 @@ public class Stage implements Serializable {
         }
         // If the file is tracked, then stage it removal and delete it.
         Commit head = Commit.getHeadCommit();
-        if (head.fileNameToBLOB.containsKey(fileName)) {
+        if (head.getFileNameToBLOB().containsKey(fileName)) {
             stagedRemoval.add(fileName);
             File removedFile = join(Repository.CWD, fileName);
             removedFile.delete();

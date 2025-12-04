@@ -31,7 +31,7 @@ public class Commit implements Serializable {
     private String pid;
 
     /** The file current commit tracked. */
-    public HashMap<String, String> fileNameToBLOB;
+    private HashMap<String, String> fileNameToBLOB;
 
     Commit(String message, String parent, String secondParent) {
         this.message = message;
@@ -363,7 +363,7 @@ public class Commit implements Serializable {
             // If both head and branch have modified or add same file with same name
             // but different content, collision.
             if (inHead && inGiven
-                    && (!headContent.equals(splitContent) || !givenContent.equals(splitContent))) {
+                    && (!headContent.equals(splitContent) && !givenContent.equals(splitContent))) {
                 if (!headContent.equals(givenContent)) {
                     String merged = "<<<<<<< HEAD\n" + headContent + "=======\n" + givenContent + ">>>>>>>\n";
                     Utils.writeContents(join(Repository.CWD, fileName), merged);
@@ -402,5 +402,10 @@ public class Commit implements Serializable {
     public String getGitTime() {
         SimpleDateFormat gitFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
         return gitFormat.format(this.timeStamp);
+    }
+
+    /** Get fileNameToBlob of current commit. */
+    public HashMap<String, String> getFileNameToBLOB() {
+        return fileNameToBLOB;
     }
 }
