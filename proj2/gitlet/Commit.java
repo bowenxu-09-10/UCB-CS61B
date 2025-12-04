@@ -281,14 +281,19 @@ public class Commit implements Serializable {
         }
     }
 
-    /** Rule6: If given branch delete one file, you didn't, delete it. */
+    /** Rule6: If given branch delete one file, you didn't modify and delete the file, delete it. */
     private static void absentFileInGiven(Commit head, Commit split, Commit given, Stage stage) {
         for (String fileName : head.fileNameToBLOB.keySet()) {
-
             boolean notInBranch = !given.fileNameToBLOB.containsKey(fileName);
             boolean inSpilt = split.fileNameToBLOB.containsKey(fileName);
 
-            if (notInBranch && inSpilt) {
+            String spiltBlob = inSpilt ? split.fileNameToBLOB.get(fileName) : null;
+            String headBlob = head.fileNameToBLOB.get(fileName);
+
+                String inHeadContent = readContentsAsString(join(Blob.BLOB_FOLDER, headBlob));
+            String inSplitContent = inSpilt ? readContentsAsString(join(Blob.BLOB_FOLDER, spiltBlob)) : null;
+
+            if (notInBranch && inSpilt && !inSplitContent.equals(inHeadContent)) {
                 stage.removeStage(fileName);
             }
         }
@@ -313,8 +318,8 @@ public class Commit implements Serializable {
             String givenBlob = inGiven ? given.fileNameToBLOB.get(fileName) : null;
 
             String splitContent = inSplit ? readContentsAsString(join(Blob.BLOB_FOLDER, splitBlob)) : null;
-            String headContent = inHead ? Utils.readContentsAsString(join(Blob.BLOB_FOLDER, headBlob)) : null;
-            String givenContent = inGiven ? Utils.readContentsAsString(join(Blob.BLOB_FOLDER, givenBlob)) : null;
+            String headContent = inHead ? readContentsAsString(join(Blob.BLOB_FOLDER, headBlob)) : null;
+            String givenContent = inGiven ? readContentsAsString(join(Blob.BLOB_FOLDER, givenBlob)) : null;
 
             // If both head and branch have file with same name but different content, collision.
             if (inHead && inGiven) {
