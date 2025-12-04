@@ -37,10 +37,10 @@ public class Checkout {
             System.out.println("No need to checkout the current branch.");
             System.exit(0);
         }
-        Commit inBranch = Commit.getCommit(readContentsAsString(branch));
-        checkTrack(Commit.getHeadCommit());
-        Commit.importFile(inBranch);
-        Commit.removeFile(inBranch);
+        Commit given = Commit.getCommit(readContentsAsString(branch));
+        checkTrack(given);
+        Commit.importFile(given);
+        Commit.removeFile(given);
         writeContents(Branch.HEAD, branchName);
     }
 
