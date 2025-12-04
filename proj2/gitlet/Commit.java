@@ -373,7 +373,7 @@ public class Commit implements Serializable {
             // If head modified the file, but branch deleted, collision.
             if (inSplit && inHead && !inGiven) {
                 if (!headContent.equals(splitContent)) {
-                    String merged = "<<<<<<< HEAD\n" + headContent + "=======\n\n>>>>>>>\n";
+                    String merged = "<<<<<<< HEAD\n" + headContent + "=======\n>>>>>>>\n";
                     Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
                     conflict = true;
