@@ -241,15 +241,15 @@ public class Commit implements Serializable {
         Commit head = getHeadCommit();
 
         Stage stage = Stage.load();
-        applyRule1(head, split, branch, stage);
-        applyRule4(head, split, branch, stage);
-        applyRule6(head, split, branch, stage);
-        applyRule8(head, split, branch, stage);
+        modifiedInGiven(head, split, branch, stage);
+        newFileInGiven(head, split, branch, stage);
+        absentFileInGiven(head, split, branch, stage);
+        conflict(head, split, branch, stage);
         Stage.saveStage(stage);
     }
 
     /** Rule1: If the given branch modified one file, but you didn't, stage it. */
-    private static void applyRule1(Commit head, Commit split, Commit given, Stage stage) {
+    private static void modifiedInGiven(Commit head, Commit split, Commit given, Stage stage) {
         for (String fileName : split.fileNameToBLOB.keySet()) {
 
             boolean headSameAsSplit =
@@ -268,7 +268,7 @@ public class Commit implements Serializable {
     }
 
     /** Rule4: If given branch add new file, but head didn't, stage it. */
-    private static void applyRule4(Commit head, Commit split, Commit given, Stage stage) {
+    private static void newFileInGiven(Commit head, Commit split, Commit given, Stage stage) {
         for (String fileName : given.fileNameToBLOB.keySet()) {
 
             boolean notInHead = !head.fileNameToBLOB.containsKey(fileName);
@@ -282,7 +282,7 @@ public class Commit implements Serializable {
     }
 
     /** Rule6: If given branch delete one file, you didn't, delete it. */
-    private static void applyRule6(Commit head, Commit split, Commit given, Stage stage) {
+    private static void absentFileInGiven(Commit head, Commit split, Commit given, Stage stage) {
         for (String fileName : head.fileNameToBLOB.keySet()) {
 
             boolean notInBranch = !given.fileNameToBLOB.containsKey(fileName);
@@ -297,7 +297,7 @@ public class Commit implements Serializable {
     /** Rule8: Any files modified in different ways in the current and
      * given branches are in conflict.
      */
-    private static void applyRule8(Commit head, Commit split, Commit given, Stage stage) {
+    private static void conflict(Commit head, Commit split, Commit given, Stage stage) {
         Set<String> allFiles = new TreeSet<>();
         allFiles.addAll(head.fileNameToBLOB.keySet());
         allFiles.addAll(given.fileNameToBLOB.keySet());
