@@ -302,11 +302,11 @@ public class Commit implements Serializable {
         allFiles.addAll(head.fileNameToBLOB.keySet());
         allFiles.addAll(given.fileNameToBLOB.keySet());
         allFiles.addAll(split.fileNameToBLOB.keySet());
+        boolean conflict = false;
         for (String fileName : allFiles) {
             boolean inSplit = split.fileNameToBLOB.containsKey(fileName);
             boolean inHead = head.fileNameToBLOB.containsKey(fileName);
             boolean inGiven = given.fileNameToBLOB.containsKey(fileName);
-            boolean conflict = false;
 
             String splitBlob = inSplit ? split.fileNameToBLOB.get(fileName) : null;
             String headBlob = inHead ? head.fileNameToBLOB.get(fileName) : null;
@@ -347,8 +347,8 @@ public class Commit implements Serializable {
                     conflict = true;
                 }
             }
-            if (conflict) {System.out.println("Encountered a merge conflict.");}
         }
+        if (conflict) {System.out.println("Encountered a merge conflict.");}
     }
 
     public String getGitTime() {
