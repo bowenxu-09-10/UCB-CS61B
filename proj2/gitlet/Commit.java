@@ -230,6 +230,12 @@ public class Commit implements Serializable {
      * Rule1: If the given branch modified one file, but you didn't, stage it.
      * Rule2: If the given branch didn't modify, but head did, nothing change.
      * Rule3: If both modified the same file and do the same modify, no clash.
+     * Rule4: If given branch add new file but head didn't, stage it.
+     * RUle5: If head add new file but given branch didn't, stay the same.
+     * Rule6: If given branch delete a file, head didn't, delete it.
+     * Rule7: If both modified a file and the content differ, conflict.
+     * Rule8: If one delete a file but the other modified, conflict.
+     * Rule9: If both create new file with the same name, but content differ, conflict.
      */
     public static void mergeRule(String branchName) {
         File branchFile = join(Branch.BRANCH_DIR, branchName);
