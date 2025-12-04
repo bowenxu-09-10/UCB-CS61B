@@ -126,9 +126,7 @@ public class Repository {
             }
             System.out.println("Date: " + curr.getGitTime());
             System.out.println(curr.getMessage());
-            if (curr.getSecondParent() == null) {
-                System.out.println();
-            }
+            System.out.println();
             curr = curr.getParent();
         }
     }

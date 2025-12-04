@@ -319,7 +319,7 @@ public class Commit implements Serializable {
             // If both head and branch have file with same name but different content, collision.
             if (inHead && inGiven) {
                 if (!headContent.equals(givenContent)) {
-                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + givenContent + "\n>>>>>>>";
+                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + givenContent + "\n>>>>>>>\n";
                     Utils.writeContents(join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
                     conflict = true;
@@ -330,7 +330,7 @@ public class Commit implements Serializable {
             // If head modified the file, but branch deleted, collision.
             if (inSplit && inHead && !inGiven) {
                 if (!headContent.equals(splitContent)) {
-                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n\n>>>>>>>";
+                    String merged = "<<<<<<< HEAD\n" + headContent + "\n=======\n\n>>>>>>>\n";
                     Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
                     conflict = true;
@@ -341,7 +341,7 @@ public class Commit implements Serializable {
             // If head deleted the file, but branch modified, collision.
             if (inSplit && !inHead && inGiven) {
                 if (!givenContent.equals(splitContent)) {
-                    String merged = "<<<<<<< HEAD\n\n=======\n" + givenContent + "\n>>>>>>>";
+                    String merged = "<<<<<<< HEAD\n\n=======\n" + givenContent + "\n>>>>>>>\n";
                     Utils.writeContents(Utils.join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
                     conflict = true;
