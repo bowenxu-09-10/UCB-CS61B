@@ -250,8 +250,9 @@ public class Commit implements Serializable {
 
         // If current head is ancestor of given branch.
         if (split.equals(head.pid)) {
-            importFile(inBranch);
             Checkout.checkTrack(inBranch);
+            importFile(inBranch);
+            removeFile(inBranch);
             System.out.println("Current branch fast-forwarded.");
             System.exit(0);
         }
