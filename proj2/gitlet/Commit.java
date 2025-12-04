@@ -195,11 +195,11 @@ public class Commit implements Serializable {
             }
 
             Commit curr = getCommit(id);
-            if (curr.parent != null && visited.contains(curr.parent)) {
+            if (curr.parent != null && !visited.contains(curr.parent)) {
                 queue.add(curr.parent);
                 visited.add(curr.parent);
             }
-            if (curr.secondParent != null && visited.contains(curr.secondParent)) {
+            if (curr.secondParent != null && !visited.contains(curr.secondParent)) {
                 queue.add(curr.secondParent);
                 visited.add(curr.secondParent);
             }
@@ -319,7 +319,7 @@ public class Commit implements Serializable {
         }
     }
 
-    /** Rule6: If given branch delete one file, you didn't modify or delete the file, delete it. */
+    /** Rule6: If given branch delete one file, head didn't modify or delete the file, delete it. */
     private static void absentFileInGiven(Commit head, Commit split, Commit given, Stage stage) {
         for (String fileName : head.fileNameToBLOB.keySet()) {
             boolean notInBranch = !given.fileNameToBLOB.containsKey(fileName);
