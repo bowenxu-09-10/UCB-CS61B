@@ -176,26 +176,35 @@ public class Commit implements Serializable {
 
     /** Find the split commit of current head and branch given. */
     public static String findSplitCommit(String branchName) {
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new ArrayDeque<>();
+        Commit head = getHeadCommit();
+        Set<String> ancestor = getAllAncestor(head);
+
+
         File branch = join(Branch.BRANCH_DIR, branchName);
-        Commit inBranch = getCommit(readContentsAsString(branch));
-        Commit curr = getHeadCommit();
-        Set<String> idInCurr = new HashSet<>();
-        idInCurr.add(curr.pid);
-        // Log all the commit id of current head.
-        while (curr.parent != null) {
-            idInCurr.add(curr.parent);
-            curr = getCommit(curr.parent);
-        }
-        while (curr.secondParent != null) {
-            idInCurr.add(curr.secondParent);
-            curr = getCommit(curr.secondParent);
-        }
-        while (inBranch != null) {
-            if (idInCurr.contains(inBranch.pid)) {
-                return inBranch.pid;
+        Commit given = getCommit(readContentsAsString(branch));
+
+        queue.add(given.pid);
+        visited.add(given.pid);
+
+        while (!queue.isEmpty()) {
+            String id = queue.poll();
+            if (ancestor.contains(id)) {
+                return id;
             }
-            inBranch = getCommit(inBranch.parent);
+
+            Commit curr = getCommit(id);
+            if (curr.parent != null && visited.contains(curr.parent)) {
+                queue.add(curr.parent);
+                visited.add(curr.parent);
+            }
+            if (curr.secondParent != null && visited.contains(curr.secondParent)) {
+                queue.add(curr.secondParent);
+                visited.add(curr.secondParent);
+            }
         }
+
         return null;
     }
 
