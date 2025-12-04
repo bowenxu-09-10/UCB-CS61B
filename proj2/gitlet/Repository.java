@@ -120,8 +120,8 @@ public class Repository {
             System.out.println("===");
             System.out.println("commit " + curr.getPid());
             if (curr.getSecondParent() != null) {
-                String merge = "Merge: " + curr.getParentID().substring(7) + " " +
-                        curr.getSecondParent().substring(7);
+                String merge = "Merge: " + curr.getParentID().substring(0, 7) + " " +
+                        curr.getSecondParent().substring(0, 7);
                 System.out.println(merge);
             }
             System.out.println("Date: " + curr.getGitTime());
