@@ -186,13 +186,13 @@ public class Commit implements Serializable {
             idInCurr.add(curr.parent);
             curr = getCommit(curr.parent);
         }
-        // Register the first id that in the set.
-        if (idInCurr.contains(inBranch.pid)) {
-            return inBranch.pid;
+        while (curr.secondParent != null) {
+            idInCurr.add(curr.secondParent);
+            curr = getCommit(curr.secondParent);
         }
-        while (inBranch.parent != null) {
-            if (idInCurr.contains(inBranch.parent)) {
-                return inBranch.parent;
+        while (inBranch != null) {
+            if (idInCurr.contains(inBranch.pid)) {
+                return inBranch.pid;
             }
             inBranch = getCommit(inBranch.parent);
         }
