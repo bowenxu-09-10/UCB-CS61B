@@ -294,10 +294,12 @@ public class Commit implements Serializable {
         for (String fileName : split.fileNameToBLOB.keySet()) {
 
             boolean headSameAsSplit =  head.fileNameToBLOB.containsKey(fileName)
-                            && head.fileNameToBLOB.get(fileName).equals(split.fileNameToBLOB.get(fileName));
+                    && head.fileNameToBLOB.get(fileName)
+                    .equals(split.fileNameToBLOB.get(fileName));
 
             boolean givenDiffFromSplit = given.fileNameToBLOB.containsKey(fileName)
-                            && !given.fileNameToBLOB.get(fileName).equals(split.fileNameToBLOB.get(fileName));
+                    && !given.fileNameToBLOB.get(fileName)
+                    .equals(split.fileNameToBLOB.get(fileName));
 
             if (headSameAsSplit && givenDiffFromSplit) {
                 // take given version
@@ -330,7 +332,8 @@ public class Commit implements Serializable {
             String headBlob = head.fileNameToBLOB.get(fileName);
 
             String inHeadContent = readContentsAsString(join(Blob.BLOB_FOLDER, headBlob));
-            String inSplitContent = inSpilt ? readContentsAsString(join(Blob.BLOB_FOLDER, spiltBlob)) : null;
+            String inSplitContent = inSpilt
+                    ? readContentsAsString(join(Blob.BLOB_FOLDER, spiltBlob)) : null;
 
             if (notInBranch && inSpilt && inSplitContent.equals(inHeadContent)) {
                 stage.removeStage(fileName);
@@ -356,16 +359,20 @@ public class Commit implements Serializable {
             String headBlob = inHead ? head.fileNameToBLOB.get(fileName) : null;
             String givenBlob = inGiven ? given.fileNameToBLOB.get(fileName) : null;
 
-            String splitContent = inSplit ? readContentsAsString(join(Blob.BLOB_FOLDER, splitBlob)) : null;
-            String headContent = inHead ? readContentsAsString(join(Blob.BLOB_FOLDER, headBlob)) : null;
-            String givenContent = inGiven ? readContentsAsString(join(Blob.BLOB_FOLDER, givenBlob)) : null;
+            String splitContent = inSplit
+                    ? readContentsAsString(join(Blob.BLOB_FOLDER, splitBlob)) : null;
+            String headContent = inHead
+                    ? readContentsAsString(join(Blob.BLOB_FOLDER, headBlob)) : null;
+            String givenContent = inGiven
+                    ? readContentsAsString(join(Blob.BLOB_FOLDER, givenBlob)) : null;
 
             // If both head and branch have modified or add same file with same name
             // but different content, collision.
-            if (inHead && inGiven
-                    && (!headContent.equals(splitContent) && !givenContent.equals(splitContent))) {
+            if (inHead && inGiven && (!headContent.equals(splitContent)
+                    && !givenContent.equals(splitContent))) {
                 if (!headContent.equals(givenContent)) {
-                    String merged = "<<<<<<< HEAD\n" + headContent + "=======\n" + givenContent + ">>>>>>>\n";
+                    String merged = "<<<<<<< HEAD\n" + headContent
+                            + "=======\n" + givenContent + ">>>>>>>\n";
                     Utils.writeContents(join(Repository.CWD, fileName), merged);
                     stage.addStage(fileName);
                     conflict = true;
