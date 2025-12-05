@@ -46,8 +46,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /** Removes all of the mappings from this map. */
     @Override
     public void clear() {
-        // Todo
-        throw new UnsupportedOperationException();
+        size = 0;
+        root = null;
     }
 
 
