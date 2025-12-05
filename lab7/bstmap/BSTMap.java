@@ -54,8 +54,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /** Returns true if this map contains a mapping for the specified key. */
     @Override
     public boolean containsKey(K key) {
-        // Todo
-        throw new UnsupportedOperationException();
+        if (root == null) return false;
+        return get(key) != null;
     }
 
     /** Returns the value to which the specified key is mapped, or null if this
